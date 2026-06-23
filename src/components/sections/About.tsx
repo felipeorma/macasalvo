@@ -128,8 +128,8 @@ export default function About() {
                 <div className="relative glass-card p-2 shadow-xl shadow-sand-300/30">
                   <div className="w-full aspect-[4/5] rounded-[32px] overflow-hidden">
                     <motion.img
-                      src="/foto_perfil_cuencos_.JPG"
-                      alt="Maca Salvo"
+                      src={`${import.meta.env.BASE_URL}foto_perfil_cuencos_.JPG`}
+                      alt="Maca Salvo, terapeuta holística"
                       className="w-full h-full object-cover object-[center_20%]"
                       whileHover={{ scale: 1.04 }}
                       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
