@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLang } from '../context/LanguageContext';
-import { SITE_URL, BUSINESS, SERVICES, META } from '../seo.config';
+import { SITE_URL, BUSINESS, SERVICES, CREDENTIALS, META } from '../seo.config';
 
 // Upsert a <meta> tag by name/property so re-renders don't duplicate tags.
 function setMeta(attr: 'name' | 'property', key: string, content: string) {
@@ -113,6 +113,11 @@ export default function Seo() {
             'Energy Healing',
             'Theta Healing',
           ],
+          hasCredential: CREDENTIALS.map((c) => ({
+            '@type': 'EducationalOccupationalCredential',
+            credentialCategory: 'certification',
+            name: c,
+          })),
         },
         {
           '@type': 'WebSite',

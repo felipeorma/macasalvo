@@ -2,10 +2,8 @@
 // Configuración SEO central — EDITA AQUÍ cuando tengas el dominio.
 // ─────────────────────────────────────────────────────────────
 
-// 👉 CAMBIA esto por tu dominio final (sin barra al final), ej: "https://www.expansionholistica.com"
-// Mientras no tengas dominio, déjalo así; el sitio funciona igual y solo
-// los enlaces canónicos/hreflang apuntarán a este valor.
-export const SITE_URL = 'https://expansionholistica.com';
+// Dominio final del sitio (sin barra al final).
+export const SITE_URL = 'https://www.expansionholistica.com';
 
 export const BUSINESS = {
   name: 'Expansión Holística — Maca Salvo',
@@ -20,6 +18,15 @@ export const BUSINESS = {
   image: '/foto_perfil_cuencos_.JPG',
   ogImage: '/og-image.jpg',
 };
+
+// Certificaciones oficiales de Maca (E-E-A-T: señal de autoridad para Google).
+export const CREDENTIALS: string[] = [
+  'Certified Sound Healing Practitioner',
+  'Access Bars Facilitator',
+  'Sacred Geometry & Karnak Pendulum Practitioner',
+  'Reiki Master Level III',
+  'Theta Healing Practitioner',
+];
 
 // Servicios reales del sitio (ES / EN) para el schema y el sitemap.
 export const SERVICES: { es: string; en: string }[] = [
