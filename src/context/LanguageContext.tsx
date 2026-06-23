@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getServiceByPath, servicePath } from '../services.data';
 
 export type Lang = 'en' | 'es';
 
@@ -586,11 +587,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLang = (l: Lang) => {
     setLangState(l);
-    if (typeof window !== 'undefined') {
-      const target = l === 'en' ? '/en/' : '/';
-      if (window.location.pathname !== target) {
-        window.history.pushState({}, '', target);
-      }
+    if (typeof window === 'undefined') return;
+    // On a service page, switch to that same service in the other language.
+    const match = getServiceByPath(window.location.pathname);
+    const target = match ? servicePath(match.service, l) : l === 'en' ? '/en/' : '/';
+    if (window.location.pathname !== target) {
+      window.history.pushState({}, '', target);
     }
   };
 

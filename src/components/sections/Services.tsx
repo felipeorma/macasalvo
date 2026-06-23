@@ -2,8 +2,19 @@ import { useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useTransform } from 'framer-motion';
 import { Wifi, MapPin, Globe, ArrowRight, Zap, Music, Wind, Users, Star } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
+import { SERVICES_CONTENT, servicePath } from '../../services.data';
 
 const TRUNCATE_AT = 160;
+
+// Maps each homepage card to its dedicated service page.
+const SLUG_BY_ID: Record<string, string> = {
+  'access-bars': 'access-bars',
+  'sound-bath': 'sound-bath',
+  'karnak-pendulum': 'karnak-pendulum-cleansing',
+  'womens-circle': 'womens-circle',
+  'sacred-geometry': 'sacred-geometry',
+  'sound-bath-group': 'online-group-sound-bath',
+};
 
 function ServiceDescription({ text, accent, seeLess, seeMore }: { text: string; accent: string; seeLess: string; seeMore: string }) {
   const [expanded, setExpanded] = useState(false);
@@ -146,7 +157,7 @@ const modalityBgMap: Record<string, string> = {
 export default function Services() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   return (
     <section id="services" className="relative py-28 lg:py-36 overflow-hidden">
@@ -236,7 +247,9 @@ export default function Services() {
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-xl text-clay-500 mb-2 leading-snug">{t(service.nameKey)}</h3>
+                  <a href={servicePath(SERVICES_CONTENT.find((s) => s.slugEn === SLUG_BY_ID[service.id])!, lang)}>
+                    <h3 className="font-serif text-xl text-clay-500 mb-2 leading-snug hover:text-terracotta-300 transition-colors">{t(service.nameKey)}</h3>
+                  </a>
                   {t(service.priceKey) && (
                     <p className={`font-sans text-sm font-semibold tracking-wide mb-3 ${service.accent}`}>
                       {t(service.priceKey)}
@@ -257,20 +270,20 @@ export default function Services() {
                     </div>
                   )}
 
-                  <motion.button
-                    onClick={() => document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })}
+                  <motion.a
+                    href={servicePath(SERVICES_CONTENT.find((s) => s.slugEn === SLUG_BY_ID[service.id])!, lang)}
                     className={`flex items-center gap-1.5 text-xs tracking-widest uppercase font-sans ${service.accent} hover:opacity-70 transition-opacity mt-2`}
                     whileHover={{ x: 6 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {t('services.book')}
+                    {lang === 'es' ? 'Ver más' : 'Learn more'}
                     <motion.span
                       animate={{ x: [0, 3, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
                     >
                       <ArrowRight size={12} />
                     </motion.span>
-                  </motion.button>
+                  </motion.a>
                 </div>
               </TiltCard>
             </motion.div>

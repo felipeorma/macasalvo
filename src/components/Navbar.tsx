@@ -26,7 +26,7 @@ function LanguageSwitch() {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
 
@@ -49,7 +49,13 @@ export default function Navbar() {
   const handleNav = (href: string) => {
     setMobileOpen(false);
     const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    // Section not on this page (e.g. a service page) → go to the home page anchor.
+    const home = lang === 'en' ? '/en/' : '/';
+    window.location.href = `${home}${href}`;
   };
 
   return (
