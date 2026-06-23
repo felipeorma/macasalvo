@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Maca Salvo — Página no encontrada</title>
+    <script>
+      // Si el idioma pedido era inglés, manda a /en/, si no a la home en español.
+      var toEn = location.pathname.split('/').filter(Boolean).indexOf('en') !== -1;
+      location.replace(toEn ? '/en/' : '/');
+    </script>
+    <meta http-equiv="refresh" content="0; url=/" />
+  </head>
+  <body>
+    <p>Redirigiendo… <a href="/">Volver al inicio</a></p>
+  </body>
+</html>
