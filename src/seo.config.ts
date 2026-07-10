@@ -2,8 +2,9 @@
 // Configuración SEO central — EDITA AQUÍ cuando tengas el dominio.
 // ─────────────────────────────────────────────────────────────
 
-// Dominio final del sitio (sin barra al final).
-export const SITE_URL = 'https://www.expansionholistica.com';
+// Dominio final del sitio (sin barra al final). GitHub Pages sirve el apex
+// como canónico y redirige www → apex; mantener alineado con public/CNAME.
+export const SITE_URL = 'https://expansionholistica.com';
 
 export const BUSINESS = {
   name: 'Expansión Holística — Maca Salvo',
