@@ -3,22 +3,29 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { MapPin, Globe, Calendar, CreditCard, Info, ChevronDown, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
 
-const services = [
-  { id: 'access-bars',      name: 'Access Bars',                    modality: 'In-Person', duration: '90 min' },
-  { id: 'sound-bath',       name: 'Sound Bath',                     modality: 'Hybrid',    duration: '60 min' },
-  { id: 'karnak-pendulum',  name: 'Karnak Pendulum Cleansing',       modality: 'Online',    duration: '60 min' },
-  { id: 'womens-circle',    name: "Women's Circle",                  modality: 'Hybrid',    duration: '120 min' },
-  { id: 'sacred-geometry',  name: 'Sacred Geometry Harmonization',   modality: 'Online',    duration: '75 min' },
-  { id: 'sound-bath-group', name: 'Group Sound Bath Online',         modality: 'Online',    duration: '60 min' },
+// `async: true` = servicio a distancia SIN cita en vivo (no se agenda fecha/hora).
+const services: { id: string; name: string; modality: string; duration: string; async?: boolean }[] = [
+  { id: 'access-bars',      name: 'Access Bars',                              modality: 'In-Person', duration: '90 min' },
+  { id: 'sound-bath',       name: 'Sound Bath',                               modality: 'Hybrid',    duration: '60 min' },
+  { id: 'karnak-personal',  name: 'Personal Energy Harmonization (Karnak)',   modality: 'Online',    duration: '60 min', async: true },
+  { id: 'space-clearing',   name: 'Space Energy Clearing',                    modality: 'Online',    duration: '', async: true },
+  { id: 'womens-circle',    name: "Women's Circle",                           modality: 'Hybrid',    duration: '120 min' },
+  { id: 'sacred-geometry',  name: 'Sacred Geometry Harmonization',            modality: 'Online',    duration: '75 min' },
+  { id: 'sound-bath-group', name: 'Group Sound Bath Online',                  modality: 'Online',    duration: '60 min' },
+  { id: 'tarot-reading',    name: 'Tarot Reading — 5 Questions',              modality: 'Online',    duration: 'WhatsApp', async: true },
+  { id: 'bioconstellation', name: '1:1 Bioconstellation Session',             modality: 'Online',    duration: '60 min' },
 ];
 
 const stripeLinks: Record<string, Partial<Record<string, string>>> = {
-  'access-bars':     { 'In-Person': 'https://buy.stripe.com/14AeV6eR55wadd4eIh7AI05' },
+  'access-bars':     { 'In-Person': 'https://buy.stripe.com/aFa3cocIXbUy4Gy57H7AI09' },
   'sound-bath':      { 'In-Person': 'https://buy.stripe.com/eVq14gbETgaO2yq43D7AI03', 'Online': 'https://buy.stripe.com/5kQ9AMdN1e2G4Gy0Rr7AI04' },
-  'karnak-pendulum': { 'Online': 'https://buy.stripe.com/28EdR27oDbUyflc1Vv7AI06' },
+  'karnak-personal': { 'Online': 'https://buy.stripe.com/bJebIU4cr4s6b4W7fP7AI0b' },
+  'space-clearing':  { 'Online': 'https://buy.stripe.com/28EbIU8sH8Imdd4gQp7AI0a' },
   'womens-circle':   { 'In-Person': 'https://buy.stripe.com/5kQ00c6kz8Im6OG0Rr7AI07', 'Online': 'https://buy.stripe.com/5kQ00c6kz8Im6OG0Rr7AI07' },
   'sacred-geometry':  { 'Online': 'https://buy.stripe.com/cNi6oAeR53o21um9nX7AI01' },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
+  'tarot-reading':    { 'Online': 'https://buy.stripe.com/8x2bIUfV9e2Gb4WfMl7AI0c' },
+  'bioconstellation': { 'Online': 'https://buy.stripe.com/9B600cfV91fU4GygQp7AI0d' },
 };
 
 // Available time slots — Mon/Wed/Fri mornings + Sat all day
@@ -210,6 +217,7 @@ export default function Booking() {
   const [selectedTime, setSelectedTime] = useState('');
 
   const chosen = services.find((s) => s.id === selectedService);
+  const isAsync = chosen?.async === true;
   const availableModalities =
     chosen?.modality === 'In-Person'
       ? ['In-Person']
@@ -236,10 +244,10 @@ export default function Booking() {
     ? stripeLinks[selectedService]?.[selectedModality]
     : undefined;
 
-  const canCheckout = selectedService && selectedModality && selectedDate && selectedTime;
+  const canCheckout = selectedService && selectedModality && (isAsync || (selectedDate && selectedTime));
 
   const buildStripeUrl = () => {
-    if (!stripeUrl || !selectedDate || !selectedTime) return stripeUrl || '';
+    if (!stripeUrl || isAsync || !selectedDate || !selectedTime) return stripeUrl || '';
     const dateStr = encodeURIComponent(formatDate(selectedDate));
     const sep = stripeUrl.includes('?') ? '&' : '?';
     return `${stripeUrl}${sep}prefilled_custom_field_1=${dateStr}+${selectedTime}`;
@@ -316,7 +324,7 @@ export default function Booking() {
                         >
                           <div>
                             <div className="font-sans text-sm text-clay-500">{t(`therapy.${s.id}`)}</div>
-                            <div className="text-xs text-clay-400 font-sans mt-0.5">{s.duration}</div>
+                            {s.duration && <div className="text-xs text-clay-400 font-sans mt-0.5">{s.duration}</div>}
                           </div>
                           <span className={`text-[10px] px-2.5 py-1 rounded-full font-sans tracking-widest uppercase ${
                             s.modality === 'In-Person' ? 'bg-terracotta-100 text-terracotta-400' :
@@ -386,13 +394,21 @@ export default function Booking() {
                       </p>
                     </div>
                   )}
+                  {isAsync && (
+                    <div className="flex items-start gap-2 mt-3 p-3 rounded-xl bg-sage-100/40 border border-sage-200">
+                      <Info size={13} className="text-sage-500 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs font-sans text-clay-400 leading-relaxed">
+                        {t('booking.async.note')}
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Step 3 — Calendar */}
+            {/* Step 3 — Calendar (omitido para servicios asíncronos sin cita en vivo) */}
             <AnimatePresence>
-              {selectedService && selectedModality && (
+              {selectedService && selectedModality && !isAsync && (
                 <motion.div
                   key="calendar"
                   initial={{ opacity: 0, y: 12 }}

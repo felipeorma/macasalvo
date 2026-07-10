@@ -11,6 +11,7 @@ export const BUSINESS = {
   phone: '+14036790889',
   whatsapp: 'https://wa.me/14036790889',
   instagram: 'https://www.instagram.com/expansion_holistiica',
+  facebook: 'https://www.facebook.com/profile.php?id=61563131623857',
   // Negocio de área de servicio (atiende en Calgary sin dirección pública + online).
   city: 'Calgary',
   region: 'AB',
@@ -32,11 +33,13 @@ export const CREDENTIALS: string[] = [
 export const SERVICES: { es: string; en: string }[] = [
   { es: 'Access Bars', en: 'Access Bars' },
   { es: 'Baño de Sonido', en: 'Sound Bath' },
-  { es: 'Limpieza con Péndulo Karnak', en: 'Karnak Pendulum Cleansing' },
+  { es: 'Armonización Energética Personal con Péndulo Karnak', en: 'Personal Energy Harmonization with Karnak Pendulum' },
+  { es: 'Limpieza Energética de Ambientes', en: 'Space Energy Clearing' },
   { es: 'Círculo de Mujeres', en: "Women's Circle" },
   { es: 'Armonización con Geometría Sagrada', en: 'Sacred Geometry Harmonization' },
   { es: 'Baño de Sonido Grupal Online', en: 'Online Group Sound Bath' },
-  { es: 'Energía de Hogar o Negocio', en: 'Home or Business Energy Clearing' },
+  { es: 'Lectura de Tarot Remota — 5 Preguntas', en: 'Remote Tarot Reading — 5 Questions' },
+  { es: 'Sesión de Bioconstelación 1:1', en: '1:1 Bioconstellation Session' },
 ];
 
 type Meta = { title: string; description: string; ogLocale: string; hreflang: string; path: string };

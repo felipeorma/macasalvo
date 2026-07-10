@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useTransform } from 'framer-motion';
-import { Wifi, MapPin, Globe, ArrowRight, Zap, Music, Wind, Users, Star } from 'lucide-react';
+import { Wifi, MapPin, Globe, ArrowRight, Zap, Music, Wind, Users, Star, Home, Sparkles, HeartHandshake } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
 import { SERVICES_CONTENT, servicePath } from '../../services.data';
 
@@ -10,10 +10,13 @@ const TRUNCATE_AT = 160;
 const SLUG_BY_ID: Record<string, string> = {
   'access-bars': 'access-bars',
   'sound-bath': 'sound-bath',
-  'karnak-pendulum': 'karnak-pendulum-cleansing',
+  'karnak-personal': 'personal-energy-harmonization',
+  'space-clearing': 'space-energy-clearing',
   'womens-circle': 'womens-circle',
   'sacred-geometry': 'sacred-geometry',
   'sound-bath-group': 'online-group-sound-bath',
+  'tarot-reading': 'tarot-reading',
+  'bioconstellation': 'bioconstellation',
 };
 
 function ServiceDescription({ text, accent, seeLess, seeMore }: { text: string; accent: string; seeLess: string; seeMore: string }) {
@@ -79,7 +82,6 @@ const serviceConfigs = [
     color: 'from-terracotta-100 to-rose-100',
     accent: 'text-terracotta-300',
     border: 'border-terracotta-200',
-    subtags: null,
   },
   {
     id: 'sound-bath',
@@ -92,20 +94,18 @@ const serviceConfigs = [
     color: 'from-sage-100 to-sand-100',
     accent: 'text-sage-500',
     border: 'border-sage-200',
-    subtags: null,
   },
   {
-    id: 'karnak-pendulum',
+    id: 'karnak-personal',
     icon: Wind,
-    nameKey: 'services.s3.name',
-    descKey: 'services.s3.desc',
-    priceKey: 'services.s3.price',
+    nameKey: 'services.s8.name',
+    descKey: 'services.s8.desc',
+    priceKey: 'services.s8.price',
     modalityKey: 'services.modality.remoteonly',
     modalityIcon: Globe,
     color: 'from-gold-100 to-sand-200',
     accent: 'text-gold-400',
     border: 'border-gold-200',
-    subtags: ['services.s3.sub1', 'services.s3.sub2', 'services.s3.sub3'],
   },
   {
     id: 'womens-circle',
@@ -118,7 +118,6 @@ const serviceConfigs = [
     color: 'from-rose-100 to-terracotta-100',
     accent: 'text-rose-400',
     border: 'border-rose-200',
-    subtags: null,
   },
   {
     id: 'sacred-geometry',
@@ -131,7 +130,6 @@ const serviceConfigs = [
     color: 'from-sand-100 to-beige-200',
     accent: 'text-sand-500',
     border: 'border-sand-300',
-    subtags: null,
   },
   {
     id: 'sound-bath-group',
@@ -144,7 +142,42 @@ const serviceConfigs = [
     color: 'from-sage-100 to-gold-100',
     accent: 'text-sage-500',
     border: 'border-sage-200',
-    subtags: null,
+  },
+  {
+    id: 'space-clearing',
+    icon: Home,
+    nameKey: 'services.s7.name',
+    descKey: 'services.s7.desc',
+    priceKey: 'services.s7.price',
+    modalityKey: 'services.modality.remoteonly',
+    modalityIcon: Globe,
+    color: 'from-sage-100 to-sand-200',
+    accent: 'text-sage-500',
+    border: 'border-sage-200',
+  },
+  {
+    id: 'tarot-reading',
+    icon: Sparkles,
+    nameKey: 'services.s9.name',
+    descKey: 'services.s9.desc',
+    priceKey: 'services.s9.price',
+    modalityKey: 'services.modality.remoteonly',
+    modalityIcon: Globe,
+    color: 'from-rose-100 to-gold-100',
+    accent: 'text-rose-400',
+    border: 'border-rose-200',
+  },
+  {
+    id: 'bioconstellation',
+    icon: HeartHandshake,
+    nameKey: 'services.s10.name',
+    descKey: 'services.s10.desc',
+    priceKey: 'services.s10.price',
+    modalityKey: 'services.modality.remoteonly',
+    modalityIcon: Globe,
+    color: 'from-terracotta-100 to-sand-100',
+    accent: 'text-terracotta-300',
+    border: 'border-terracotta-200',
   },
 ];
 
@@ -256,19 +289,6 @@ export default function Services() {
                     </p>
                   )}
                   <ServiceDescription text={t(service.descKey)} accent={service.accent} seeLess={t('services.see.less')} seeMore={t('services.see.more')} />
-
-                  {service.subtags && (
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {service.subtags.map((tagKey) => (
-                        <span
-                          key={tagKey}
-                          className="text-[10px] px-2.5 py-1 rounded-full bg-white/50 border border-sand-300 text-clay-400 font-sans"
-                        >
-                          {t(tagKey)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
 
                   <motion.a
                     href={servicePath(SERVICES_CONTENT.find((s) => s.slugEn === SLUG_BY_ID[service.id])!, lang)}

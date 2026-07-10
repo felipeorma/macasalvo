@@ -65,6 +65,15 @@ function serve(port) {
 
 async function renderRoute(browser, url) {
   const page = await browser.newPage();
+  // Block third-party embeds (Facebook SDK, Instagram embed.js) during prerender:
+  // the static HTML keeps the plain fallback links (good for crawlers) and the
+  // real embeds load client-side in the browser.
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    const u = req.url();
+    if (/facebook\.net|facebook\.com|instagram\.com|connect\.facebook/.test(u)) req.abort();
+    else req.continue();
+  });
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await page.waitForFunction(
     () => {
@@ -74,6 +83,16 @@ async function renderRoute(browser, url) {
     { timeout: 30000 }
   );
   await new Promise((r) => setTimeout(r, 500));
+  // Strip third-party embed artifacts injected by React effects (FB SDK,
+  // Instagram embed.js, fb-root): the client re-injects them at runtime with
+  // the correct per-language locale, and the static HTML keeps only the
+  // crawler-friendly fallback links inside the embeds. Without this, the ES
+  // home's tags leak into every other prerendered route via the SPA fallback.
+  await page.evaluate(() => {
+    for (const id of ['facebook-jssdk', 'instagram-embed-js', 'fb-root']) {
+      document.getElementById(id)?.remove();
+    }
+  });
   const html = await page.content();
   await page.close();
   return '<!doctype html>\n' + html;

@@ -4,6 +4,7 @@ import About from '../components/sections/About';
 import Assessment from '../components/sections/Assessment';
 import Services from '../components/sections/Services';
 import Instagram from '../components/sections/Instagram';
+import FacebookSection from '../components/sections/FacebookSection';
 import Booking from '../components/sections/Booking';
 import Testimonials from '../components/sections/Testimonials';
 import FAQ from '../components/sections/FAQ';
@@ -20,6 +21,7 @@ export default function Home() {
         <Assessment />
         <Services />
         <Instagram />
+        <FacebookSection />
         <Booking />
         <Testimonials />
         <FAQ />

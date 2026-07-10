@@ -95,7 +95,7 @@ export default function Seo() {
         { '@type': 'Country', name: 'Canada' },
         { '@type': 'Country', name: 'Chile' },
       ],
-      sameAs: [BUSINESS.instagram, BUSINESS.whatsapp],
+      sameAs: [BUSINESS.instagram, BUSINESS.facebook, BUSINESS.whatsapp],
       founder: { '@id': `${SITE_URL}/#maca` },
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
@@ -114,7 +114,7 @@ export default function Seo() {
       jobTitle: es ? 'Terapeuta Holística' : 'Holistic Therapist',
       image: abs(BUSINESS.image),
       url: SITE_URL,
-      sameAs: [BUSINESS.instagram],
+      sameAs: [BUSINESS.instagram, BUSINESS.facebook],
       knowsAbout: [
         'Sound Healing',
         'Reiki',

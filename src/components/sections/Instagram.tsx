@@ -2,10 +2,20 @@ import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Instagram as InstagramIcon, ExternalLink, Play, RefreshCw } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
+import { BUSINESS } from '../../seo.config';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 const INSTAGRAM_TOKEN = import.meta.env.VITE_INSTAGRAM_TOKEN as string;
+
+const IG_PROFILE_URL = `${BUSINESS.instagram}/`;
+const IG_SCRIPT_ID = 'instagram-embed-js';
+
+declare global {
+  interface Window {
+    instgrm?: { Embeds: { process: () => void } };
+  }
+}
 
 interface InstagramPost {
   id: string;
@@ -16,34 +26,67 @@ interface InstagramPost {
   timestamp: string;
 }
 
-const mockPosts = [
-  { id: 'm1', bg: 'from-terracotta-100 to-rose-100', label: '✨', caption: 'Sound healing session — feel the frequencies restore your natural rhythm...', tag: '#SoundBath' },
-  { id: 'm2', bg: 'from-sage-100 to-sand-100', label: '🌿', caption: 'Access Bars: releasing the charge behind every thought that limits you...', tag: '#AccessBars' },
-  { id: 'm3', bg: 'from-gold-100 to-sand-200', label: '🔮', caption: 'Sacred geometry holds the codes of creation — work with the universe, not against it.', tag: '#GeometriaSagrada' },
-];
+// Loads Instagram's official embed.js once and processes embeds.
+// Defensive: handles the script tag already existing (e.g. prerendered HTML).
+function ensureIgEmbed(onReady: () => void) {
+  if (window.instgrm) {
+    onReady();
+    return;
+  }
+  if (!document.getElementById(IG_SCRIPT_ID)) {
+    const script = document.createElement('script');
+    script.id = IG_SCRIPT_ID;
+    script.async = true;
+    script.src = 'https://www.instagram.com/embed.js';
+    document.head.appendChild(script);
+  }
+  let tries = 0;
+  const timer = window.setInterval(() => {
+    tries += 1;
+    if (window.instgrm) {
+      window.clearInterval(timer);
+      onReady();
+    } else if (tries > 100) {
+      window.clearInterval(timer); // fallback link inside the blockquote still works
+    }
+  }, 200);
+}
 
-function MockGrid({ isInView }: { isInView: boolean }) {
+// Official Instagram profile embed — real profile data, no invented posts.
+function ProfileEmbed() {
+  useEffect(() => {
+    ensureIgEmbed(() => window.instgrm?.Embeds.process());
+  }, []);
+
   return (
-    <>
-      {mockPosts.map((post, i) => (
-        <motion.div
-          key={post.id}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.5, delay: i * 0.06 }}
-          className="relative group cursor-pointer overflow-hidden rounded-2xl aspect-square"
+    <div className="w-full max-w-[540px] mx-auto">
+      <blockquote
+        className="instagram-media"
+        data-instgrm-permalink={IG_PROFILE_URL}
+        data-instgrm-version="14"
+        style={{
+          background: '#FFFFFF',
+          border: 0,
+          borderRadius: '16px',
+          boxShadow: '0 4px 24px rgba(90, 74, 66, 0.08)',
+          margin: '0 auto',
+          maxWidth: '540px',
+          minWidth: '280px',
+          padding: 0,
+          width: '100%',
+        }}
+      >
+        {/* Built-in fallback while the embed loads or if it is blocked */}
+        <a
+          href={IG_PROFILE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block p-8 text-center font-sans text-sm text-clay-500 underline underline-offset-2"
         >
-          <div className={`absolute inset-0 bg-gradient-to-br ${post.bg} transition-transform duration-500 group-hover:scale-105`} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <span className="text-4xl md:text-5xl select-none">{post.label}</span>
-          </div>
-          <div className="absolute inset-0 bg-clay-500/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3 p-5 backdrop-blur-sm">
-            <p className="text-xs font-sans text-cream leading-snug text-center line-clamp-3">{post.caption}</p>
-            <span className="text-[10px] text-terracotta-200 font-sans tracking-widest">{post.tag}</span>
-          </div>
-        </motion.div>
-      ))}
-    </>
+          @expansion_holistiica
+        </a>
+      </blockquote>
+    </div>
   );
 }
 
@@ -151,11 +194,6 @@ export default function Instagram() {
             {t('instagram.subtitle')}
           </p>
           <div className="section-divider mt-6" />
-          {!usingReal && !loading && (
-            <p className="text-xs font-sans text-clay-400/70 mt-4 tracking-wide italic">
-              {t('instagram.preview')}
-            </p>
-          )}
         </motion.div>
 
         {loading ? (
@@ -164,14 +202,12 @@ export default function Instagram() {
               <RefreshCw size={22} className="text-terracotta-300 opacity-60" />
             </motion.div>
           </div>
-        ) : (
+        ) : usingReal ? (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-5xl mx-auto">
-            {usingReal ? (
-              <RealGrid posts={posts} isInView={isInView} />
-            ) : (
-              <MockGrid isInView={isInView} />
-            )}
+            <RealGrid posts={posts} isInView={isInView} />
           </div>
+        ) : (
+          <ProfileEmbed />
         )}
 
         <motion.div
@@ -181,7 +217,7 @@ export default function Instagram() {
           className="text-center mt-10"
         >
           <motion.a
-            href="https://www.instagram.com/expansion_holistiica"
+            href={BUSINESS.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-secondary inline-flex items-center gap-2"
