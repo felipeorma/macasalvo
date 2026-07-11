@@ -6,7 +6,6 @@ import Services from '../components/sections/Services';
 import Instagram from '../components/sections/Instagram';
 import FacebookSection from '../components/sections/FacebookSection';
 import Booking from '../components/sections/Booking';
-import Testimonials from '../components/sections/Testimonials';
 import FAQ from '../components/sections/FAQ';
 import Footer from '../components/Footer';
 import FloatingActions from '../components/FloatingActions';
@@ -23,7 +22,6 @@ export default function Home() {
         <Instagram />
         <FacebookSection />
         <Booking />
-        <Testimonials />
         <FAQ />
       </main>
       <Footer />

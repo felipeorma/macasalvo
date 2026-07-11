@@ -1,67 +1,45 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Facebook as FacebookIcon, ExternalLink, Share2 } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
 import { BUSINESS } from '../../seo.config';
 
-declare global {
-  interface Window {
-    FB?: { XFBML: { parse: (el?: HTMLElement) => void } };
-    fbAsyncInit?: () => void;
-  }
-}
-
-const FB_SDK_ID = 'facebook-jssdk';
-
-// Loads the Facebook JS SDK exactly once and parses the container.
-// Defensive: handles the script tag already existing (e.g. prerendered HTML).
-function ensureFbSdk(locale: string, onReady: () => void) {
-  if (window.FB) {
-    onReady();
-    return;
-  }
-  const existing = document.getElementById(FB_SDK_ID);
-  if (!existing) {
-    // fb-root is required by the SDK
-    if (!document.getElementById('fb-root')) {
-      const root = document.createElement('div');
-      root.id = 'fb-root';
-      document.body.prepend(root);
-    }
-    const script = document.createElement('script');
-    script.id = FB_SDK_ID;
-    script.async = true;
-    script.defer = true;
-    script.crossOrigin = 'anonymous';
-    script.src = `https://connect.facebook.net/${locale}/sdk.js#xfbml=1&version=v21.0`;
-    document.head.appendChild(script);
-  }
-  // Poll until the SDK is available (covers both fresh injection and preexisting tag)
-  let tries = 0;
-  const timer = window.setInterval(() => {
-    tries += 1;
-    if (window.FB) {
-      window.clearInterval(timer);
-      onReady();
-    } else if (tries > 100) {
-      window.clearInterval(timer); // give up after ~20s — fallback buttons still work
-    }
-  }, 200);
-}
+const PLUGIN_HEIGHT = 640;
 
 export default function FacebookSection() {
   const ref = useRef(null);
-  const pluginRef = useRef<HTMLDivElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const { t, lang } = useLang();
+  const [width, setWidth] = useState(500);
 
+  // El Page Plugin necesita un ancho fijo (180–500 px): lo medimos del
+  // contenedor para que sea responsive en móvil.
   useEffect(() => {
-    const locale = lang === 'es' ? 'es_LA' : 'en_US';
-    ensureFbSdk(locale, () => {
-      if (pluginRef.current) window.FB?.XFBML.parse(pluginRef.current);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const measure = () => {
+      const el = boxRef.current;
+      if (!el) return;
+      setWidth(Math.max(280, Math.min(500, Math.floor(el.clientWidth) - 16)));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
   }, []);
+
+  // Iframe directo del Page Plugin (sin JS SDK): carga determinística,
+  // sin problemas de timing de FB.XFBML.parse en React.
+  const locale = lang === 'es' ? 'es_LA' : 'en_US';
+  const pluginSrc =
+    'https://www.facebook.com/plugins/page.php' +
+    `?href=${encodeURIComponent(BUSINESS.facebook)}` +
+    '&tabs=timeline' +
+    `&width=${width}` +
+    `&height=${PLUGIN_HEIGHT}` +
+    '&small_header=false' +
+    '&adapt_container_width=true' +
+    '&hide_cover=false' +
+    '&show_facepile=true' +
+    `&locale=${locale}`;
 
   const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(BUSINESS.facebook)}`;
 
@@ -92,37 +70,26 @@ export default function FacebookSection() {
           <div className="section-divider mt-6" />
         </motion.div>
 
-        {/* Facebook Page Plugin — timeline + cover + follow button (parsed by the FB SDK) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
           className="w-full max-w-[520px] mx-auto"
         >
-          <div ref={pluginRef} className="glass-card border border-sand-300 overflow-hidden p-2 flex justify-center min-h-[220px]">
-            <div
-              className="fb-page w-full"
-              data-href={BUSINESS.facebook}
-              data-tabs="timeline"
-              data-width="500"
-              data-height="640"
-              data-small-header="false"
-              data-adapt-container-width="true"
-              data-hide-cover="false"
-              data-show-facepile="true"
-            >
-              {/* Built-in fallback while the plugin loads or if it is blocked */}
-              <blockquote cite={BUSINESS.facebook} className="fb-xfbml-parse-ignore p-6 text-center">
-                <a
-                  href={BUSINESS.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-sans text-sm text-clay-500 underline underline-offset-2"
-                >
-                  Expansión Holística — Facebook
-                </a>
-              </blockquote>
-            </div>
+          <div ref={boxRef} className="glass-card border border-sand-300 overflow-hidden p-2 flex justify-center">
+            <iframe
+              key={`${width}-${locale}`}
+              src={pluginSrc}
+              width={width}
+              height={PLUGIN_HEIGHT}
+              style={{ border: 'none', overflow: 'hidden', maxWidth: '100%', borderRadius: '12px' }}
+              scrolling="no"
+              frameBorder="0"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              title="Expansión Holística en Facebook"
+              loading="lazy"
+            />
           </div>
         </motion.div>
 
