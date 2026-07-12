@@ -26,7 +26,6 @@ export const CREDENTIALS: string[] = [
   'Certified Sound Healing Practitioner',
   'Access Bars Facilitator',
   'Sacred Geometry & Karnak Pendulum Practitioner',
-  'Reiki Master Level III',
   'Theta Healing Practitioner',
 ];
 
@@ -48,18 +47,18 @@ type Meta = { title: string; description: string; ogLocale: string; hreflang: st
 export const META: Record<'es' | 'en', Meta> = {
   es: {
     title:
-      'Maca Salvo — Terapeuta Holística | Sanación con Sonido, Reiki y Energía (online en Chile · Calgary)',
+      'Maca Salvo — Terapeuta Holística | Sanación con Sonido, Access Bars y Energía (online en Chile · Calgary)',
     description:
-      'Terapias holísticas con Maca Salvo: baño de sonido, Access Bars, Reiki y armonización energética. Sesiones online para Chile y Latinoamérica, y presenciales en Calgary, Canadá.',
+      'Terapias holísticas con Maca Salvo: baño de sonido, Access Bars, tarot y armonización energética. Sesiones online para Chile y Latinoamérica, y presenciales en Calgary, Canadá.',
     ogLocale: 'es_CL',
     hreflang: 'es-CL',
     path: '/',
   },
   en: {
     title:
-      'Maca Salvo — Holistic Therapist in Calgary | Sound Healing, Reiki & Energy Work',
+      'Maca Salvo — Holistic Therapist in Calgary | Sound Healing, Access Bars & Energy Work',
     description:
-      'Holistic therapy with Maca Salvo: sound baths, Access Bars, Reiki and energy harmonization. In-person in Calgary, Canada and online sessions worldwide.',
+      'Holistic therapy with Maca Salvo: sound baths, Access Bars, tarot readings and energy harmonization. In-person in Calgary, Canada and online sessions worldwide.',
     ogLocale: 'en_CA',
     hreflang: 'en-CA',
     path: '/en/',

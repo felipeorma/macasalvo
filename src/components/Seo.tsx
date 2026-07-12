@@ -117,7 +117,8 @@ export default function Seo() {
       sameAs: [BUSINESS.instagram, BUSINESS.facebook],
       knowsAbout: [
         'Sound Healing',
-        'Reiki',
+        'Tarot Reading',
+        'Bioconstellation',
         'Access Bars',
         'Sacred Geometry',
         'Karnak Pendulum',
