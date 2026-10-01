@@ -17,7 +17,7 @@ const services: { id: string; name: string; modality: string; duration: string; 
 
 const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'access-bars':     { 'In-Person': 'https://buy.stripe.com/fZu9AMfV9e2Gb4W8jT7AI0g' },
-  'sound-bath':      { 'Online': 'https://buy.stripe.com/5kQ9AMdN1e2G4Gy0Rr7AI04' },
+  'sound-bath':      { 'Online': 'https://buy.stripe.com/bJe14g5gv8Ima0ScA97AI0h' },
   'karnak-personal': { 'Online': 'https://buy.stripe.com/bJebIU4cr4s6b4W7fP7AI0b' },
   'space-clearing':  { 'Online': 'https://buy.stripe.com/28EbIU8sH8Imdd4gQp7AI0a' },
   'sacred-geometry':  { 'Online': 'https://buy.stripe.com/cNi6oAeR53o21um9nX7AI01' },
