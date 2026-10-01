@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { MapPin, Globe, Calendar, CreditCard, Info, ChevronDown, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
@@ -231,6 +231,16 @@ export default function Booking() {
     setSelectedTime('');
     setServiceOpen(false);
   };
+
+  // Enlace directo a un servicio: /?servicio=sacred-geometry#booking
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('servicio');
+    if (!wanted || !services.some((s) => s.id === wanted)) return;
+    handleServiceSelect(wanted);
+    const t = window.setTimeout(() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }), 400);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const formatDate = (d: Date) => {
     return d.toLocaleDateString(lang === 'es' ? 'es-AR' : 'en-US', {

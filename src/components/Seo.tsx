@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useLang } from '../context/LanguageContext';
 import { SITE_URL, BUSINESS, SERVICES, CREDENTIALS, META } from '../seo.config';
 import { getServiceByPath } from '../services.data';
+import { isGeometryTestPath, TEST_PATHS } from '../routes';
+import { TEST_META } from '../geometryTest.data';
 
 function setMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -35,17 +37,21 @@ export default function Seo() {
     const match =
       typeof window !== 'undefined' ? getServiceByPath(window.location.pathname) : null;
     const es = lang === 'es';
+    const isTest = typeof window !== 'undefined' && isGeometryTestPath(window.location.pathname);
 
     // Paths for canonical + hreflang (home or service page)
-    const esPath = match ? `/servicios/${match.service.slugEs}` : '/';
-    const enPath = match ? `/en/services/${match.service.slugEn}` : '/en/';
+    const esPath = isTest ? TEST_PATHS.es : match ? `/servicios/${match.service.slugEs}` : '/';
+    const enPath = isTest ? TEST_PATHS.en : match ? `/en/services/${match.service.slugEn}` : '/en/';
     const canonical = abs(es ? esPath : enPath);
     const ogImage = abs(BUSINESS.ogImage);
 
     // Title + description
     let title: string;
     let description: string;
-    if (match) {
+    if (isTest) {
+      title = TEST_META[lang].title;
+      description = TEST_META[lang].description;
+    } else if (match) {
       title = es ? match.service.metaTitleEs : match.service.metaTitleEn;
       description = es ? match.service.metaDescEs : match.service.metaDescEn;
     } else {
@@ -179,6 +185,28 @@ export default function Seo() {
           { '@type': 'ListItem', position: 3, name, item: canonical },
         ],
       });
+    }
+
+    if (isTest) {
+      graph.push(
+        {
+          '@type': 'WebPage',
+          '@id': `${canonical}#webpage`,
+          url: canonical,
+          name: title,
+          description,
+          inLanguage: META[lang].hreflang,
+          isPartOf: { '@id': `${SITE_URL}/#website` },
+          about: { '@type': 'Thing', name: es ? 'Sólidos Platónicos y geometría sagrada' : 'Platonic Solids and sacred geometry' },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: es ? 'Inicio' : 'Home', item: abs(es ? '/' : '/en/') },
+            { '@type': 'ListItem', position: 2, name: es ? 'Test de Geometría Sagrada' : 'Sacred Geometry Test', item: canonical },
+          ],
+        }
+      );
     }
 
     const ld = { '@context': 'https://schema.org', '@graph': graph };

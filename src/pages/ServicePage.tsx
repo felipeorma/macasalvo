@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLang } from '../context/LanguageContext';
 import { BUSINESS } from '../seo.config';
+import { TEST_PATHS } from '../routes';
 import { SERVICES_CONTENT, servicePath, type ServiceContent } from '../services.data';
 
 export default function ServicePage({ service }: { service: ServiceContent }) {
@@ -36,6 +37,9 @@ export default function ServicePage({ service }: { service: ServiceContent }) {
         trust: 'Con Maca Salvo, terapeuta holística certificada en Calgary',
         other: 'Otras terapias',
         back: 'Ver todos los servicios',
+        testTitle: 'Descubre tu Sólido Platónico',
+        testText: 'Haz el test gratuito de 7 preguntas y recibe un mensaje según el sólido que resuena contigo hoy.',
+        testCta: 'Hacer el test',
       }
     : {
         home: 'Home',
@@ -47,6 +51,9 @@ export default function ServicePage({ service }: { service: ServiceContent }) {
         trust: 'With Maca Salvo, certified holistic therapist in Calgary',
         other: 'Other therapies',
         back: 'See all services',
+        testTitle: 'Discover your Platonic Solid',
+        testText: 'Take the free 7-question test and receive a message based on the solid that resonates with you today.',
+        testCta: 'Take the test',
       };
 
   const others = SERVICES_CONTENT.filter((s) => s.slugEs !== service.slugEs).slice(0, 3);
@@ -150,6 +157,21 @@ export default function ServicePage({ service }: { service: ServiceContent }) {
             </div>
           </div>
         </section>
+
+        {service.slugEs === 'geometria-sagrada' && (
+          <section className="relative py-16">
+            <div className="max-w-3xl mx-auto px-6">
+              <div className="rounded-3xl p-8 bg-gradient-to-br from-terracotta-100 via-sand-100 to-sage-100 border border-terracotta-200 text-center">
+                <h2 className="font-serif text-2xl md:text-3xl text-clay-500 mb-3">{L.testTitle}</h2>
+                <p className="font-sans font-light text-clay-500 leading-relaxed max-w-xl mx-auto mb-6">{L.testText}</p>
+                <a href={TEST_PATHS[lang]} className="btn-primary text-sm py-3 px-6 font-bold inline-flex items-center gap-2">
+                  {L.testCta}
+                  <ArrowRight size={15} />
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Other services */}
         <section className="relative py-16 bg-cream">

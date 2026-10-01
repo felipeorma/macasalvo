@@ -32,6 +32,12 @@ const re = /slugEs:\s*'([^']+)',\s*slugEn:\s*'([^']+)'/g;
 let m;
 while ((m = re.exec(data)) !== null) SERVICES.push({ slugEs: m[1], slugEn: m[2] });
 
+// Test de Geometría Sagrada: las URLs salen de src/routes.ts (única fuente).
+const routesSrc = readFileSync(join(ROOT, 'src/routes.ts'), 'utf8');
+const testMatch = routesSrc.match(/TEST_PATHS[^{]*\{\s*es:\s*'([^']+)',\s*en:\s*'([^']+)'/);
+if (!testMatch) throw new Error('No se pudo leer TEST_PATHS de src/routes.ts');
+const [, TEST_ES, TEST_EN] = testMatch;
+
 const MIME = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css',
   '.svg': 'image/svg+xml', '.json': 'application/json', '.png': 'image/png',
@@ -116,6 +122,10 @@ async function main() {
     routes.push({ route: `${BASE}servicios/${s.slugEs}/`, out: `servicios/${s.slugEs}/index.html` });
     routes.push({ route: `${BASE}en/services/${s.slugEn}/`, out: `en/services/${s.slugEn}/index.html` });
   }
+  for (const p of [TEST_ES, TEST_EN]) {
+    const clean = p.replace(/^\/|\/$/g, '');
+    routes.push({ route: `${BASE}${clean}/`, out: `${clean}/index.html` });
+  }
 
   for (const r of routes) {
     const html = await renderRoute(browser, `${origin}${r.route}`);
@@ -136,6 +146,7 @@ async function main() {
   const pairs = [
     { es: '/', en: '/en/' },
     ...SERVICES.map((s) => ({ es: `/servicios/${s.slugEs}`, en: `/en/services/${s.slugEn}` })),
+    { es: TEST_ES, en: TEST_EN },
   ];
   const urlBlock = (loc, p) => `  <url>
     <loc>${SITE_URL}${loc}</loc>

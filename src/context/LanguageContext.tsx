@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getServiceByPath, servicePath } from '../services.data';
+import { isGeometryTestPath, TEST_PATHS } from '../routes';
 
 export type Lang = 'en' | 'es';
 
@@ -604,9 +605,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLang = (l: Lang) => {
     setLangState(l);
     if (typeof window === 'undefined') return;
-    // On a service page, switch to that same service in the other language.
+    // On a service page (or the sacred geometry test), switch to the same page in the other language.
     const match = getServiceByPath(window.location.pathname);
-    const target = match ? servicePath(match.service, l) : l === 'en' ? '/en/' : '/';
+    const target = isGeometryTestPath(window.location.pathname)
+      ? TEST_PATHS[l]
+      : match
+        ? servicePath(match.service, l)
+        : l === 'en' ? '/en/' : '/';
     if (window.location.pathname !== target) {
       window.history.pushState({}, '', target);
     }
