@@ -7,6 +7,7 @@ import PlatonicSolid from '../components/PlatonicSolid';
 import { useLang } from '../context/LanguageContext';
 import { BUSINESS, SITE_URL } from '../seo.config';
 import { TEST_PATHS } from '../routes';
+import { SACRED_GEOMETRY_PAY_URL } from '../payments';
 import { COPY, QUESTIONS, SOLIDS, SOLID_ORDER, TEST_META, scoreAnswers, type SolidKey } from '../geometryTest.data';
 
 type Stage = 'intro' | 'quiz' | 'result';
@@ -76,7 +77,6 @@ export default function GeometryTest() {
   };
 
   const home = es ? '/' : '/en/';
-  const bookingHref = `${home}?servicio=sacred-geometry#booking`;
   const primary = SOLIDS[result.primary][lang];
   const secondary = result.secondary ? SOLIDS[result.secondary][lang] : null;
   const shareUrl = `${SITE_URL}${TEST_PATHS[lang]}`;
@@ -328,7 +328,13 @@ export default function GeometryTest() {
                     <h3 className="font-serif text-3xl md:text-4xl text-clay-500 leading-tight">{copy.ctaTitle}</h3>
                     <p className="font-sans font-light text-clay-500 leading-relaxed max-w-xl mx-auto mt-4">{copy.ctaText}</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-7">
-                      <a href={bookingHref} className="btn-primary font-bold justify-center" data-cta="book">
+                      <a
+                        href={SACRED_GEOMETRY_PAY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary font-bold justify-center"
+                        data-cta="book"
+                      >
                         {copy.ctaButton}
                         <ArrowRight size={15} />
                       </a>
@@ -342,6 +348,7 @@ export default function GeometryTest() {
                         {copy.ctaWhatsapp}
                       </a>
                     </div>
+                    <p className="font-sans text-xs text-clay-500/80 leading-relaxed max-w-md mx-auto mt-5">{copy.ctaNote}</p>
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center gap-6 mt-10">

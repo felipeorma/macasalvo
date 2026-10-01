@@ -345,6 +345,7 @@ export const COPY: Record<
     ctaText: string;
     ctaButton: string;
     ctaWhatsapp: string;
+    ctaNote: string;
     retake: string;
     share: string;
     shareText: (name: string, element: string) => string;
@@ -375,6 +376,7 @@ export const COPY: Record<
       'En la sesión, Maca selecciona los Sólidos Platónicos según lo que necesitas trabajar y los activa mediante visualización guiada y trabajo energético consciente. Tu resultado de hoy es un buen punto de partida para conversar. La sesión es online, desde la comodidad de tu espacio.',
     ctaButton: 'Agenda tu Activación de Geometría Sagrada',
     ctaWhatsapp: 'Tengo dudas: escríbeme por WhatsApp',
+    ctaNote: 'Pago seguro con Stripe. Después del pago, Maca te contactará por WhatsApp o correo para coordinar el día y la hora de tu sesión.',
     retake: 'Repetir el test',
     share: 'Compartir mi resultado',
     shareText: (name, element) => `Mi sólido platónico es el ${name} (${element}). Descubre el tuyo:`,
@@ -405,6 +407,7 @@ export const COPY: Record<
       'In the session, Maca selects the Platonic Solids according to what you need to work on and activates them through guided visualization and conscious energy work. Today’s result is a good starting point for the conversation. The session is online, from the comfort of your own space.',
     ctaButton: 'Book your Sacred Geometry Activation',
     ctaWhatsapp: 'I have questions: message me on WhatsApp',
+    ctaNote: 'Secure payment with Stripe. After payment, Maca will contact you via WhatsApp or email to coordinate the day and time of your session.',
     retake: 'Retake the test',
     share: 'Share my result',
     shareText: (name, element) => `My Platonic Solid is the ${name} (${element}). Discover yours:`,

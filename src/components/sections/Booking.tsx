@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { MapPin, Globe, Calendar, CreditCard, Info, ChevronDown, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
+import { SACRED_GEOMETRY_PAY_URL } from '../../payments';
 
 // `async: true` = servicio a distancia SIN cita en vivo (no se agenda fecha/hora).
 const services: { id: string; name: string; modality: string; duration: string; async?: boolean }[] = [
@@ -20,7 +21,7 @@ const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'sound-bath':      { 'Online': 'https://buy.stripe.com/bJe14g5gv8Ima0ScA97AI0h' },
   'karnak-personal': { 'Online': 'https://buy.stripe.com/28E6oA24je2Gc902Zz7AI0i' },
   'space-clearing':  { 'Online': 'https://buy.stripe.com/bJe8wIeR55wab4W1Vv7AI0k' },
-  'sacred-geometry':  { 'Online': 'https://buy.stripe.com/14A5kweR5e2G7SK2Zz7AI0j' },
+  'sacred-geometry':  { 'Online': SACRED_GEOMETRY_PAY_URL },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
   'tarot-reading':    { 'Online': 'https://buy.stripe.com/bJe3co8sH7Ei2yq0Rr7AI0l' },
   'bioconstellation': { 'Online': 'https://buy.stripe.com/5kQcMY10f9Mq4GyfMl7AI0m' },
