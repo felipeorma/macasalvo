@@ -4,16 +4,20 @@ import { ArrowRight, ArrowLeft, RotateCcw, Share2, MessageCircle, Clock, ListChe
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PlatonicSolid from '../components/PlatonicSolid';
+import ShareStoryModal from '../components/ShareStoryModal';
 import { useLang } from '../context/LanguageContext';
 import { BUSINESS, SITE_URL } from '../seo.config';
 import { TEST_PATHS } from '../routes';
 import { SACRED_GEOMETRY_PAY_URL } from '../payments';
+import { renderStoryImage, storyFilename } from '../storyImage';
 import { COPY, QUESTIONS, SOLIDS, SOLID_ORDER, TEST_META, scoreAnswers, type SolidKey } from '../geometryTest.data';
 
 type Stage = 'intro' | 'quiz' | 'result';
 
 const TOTAL = QUESTIONS.length;
 const CHIP_ICONS = [ListChecks, Clock, Sparkles];
+const SHARE_CLASS =
+  'inline-flex items-center gap-2 text-xs tracking-widest uppercase font-sans font-semibold text-clay-500 hover:text-terracotta-300 transition-colors';
 
 export default function GeometryTest() {
   const { lang } = useLang();
@@ -25,6 +29,9 @@ export default function GeometryTest() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<SolidKey[]>([]);
   const [picked, setPicked] = useState<number | null>(null);
+  const [story, setStory] = useState<{ url: string; file: File } | null>(null);
+  const [storyFailed, setStoryFailed] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const topRef = useRef<HTMLDivElement>(null);
   const timer = useRef<number | undefined>(undefined);
@@ -82,6 +89,47 @@ export default function GeometryTest() {
   const shareUrl = `${SITE_URL}${TEST_PATHS[lang]}`;
   const shareHref = `https://wa.me/?text=${encodeURIComponent(`${copy.shareText(primary.name, primary.element)} ${shareUrl}`)}`;
   const fade = reduced ? { duration: 0 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
+
+  // La imagen para historias se prepara apenas aparece el resultado, para que el botón
+  // pueda abrir el menú de compartir del celular al instante (los navegadores exigen
+  // llamarlo dentro del mismo toque, sin esperas).
+  useEffect(() => {
+    if (stage !== 'result') return;
+    let cancelled = false;
+    let url = '';
+    setStory(null);
+    setStoryFailed(false);
+    renderStoryImage(result.primary, lang)
+      .then((blob) => {
+        if (cancelled) return;
+        url = URL.createObjectURL(blob);
+        setStory({ url, file: new File([blob], storyFilename(result.primary, lang), { type: 'image/png' }) });
+      })
+      .catch(() => {
+        if (!cancelled) setStoryFailed(true);
+      });
+    return () => {
+      cancelled = true;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [stage, result.primary, lang]);
+
+  const canShareFile =
+    !!story && typeof navigator !== 'undefined' && typeof navigator.canShare === 'function' && navigator.canShare({ files: [story.file] });
+  const closeShare = useCallback(() => setShareOpen(false), []);
+  const nativeShare = async () => {
+    if (!story) return;
+    try {
+      await navigator.share({
+        files: [story.file],
+        title: TEST_META[lang].h1,
+        text: `${copy.shareText(primary.name, primary.element)} ${shareUrl}`,
+      });
+      setShareOpen(false);
+    } catch {
+      // La persona cerró el menú de compartir: no es un error.
+    }
+  };
 
   return (
     <>
@@ -360,15 +408,23 @@ export default function GeometryTest() {
                       <RotateCcw size={14} />
                       {copy.retake}
                     </button>
-                    <a
-                      href={shareHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-xs tracking-widest uppercase font-sans font-semibold text-clay-500 hover:text-terracotta-300 transition-colors"
-                    >
-                      <Share2 size={14} />
-                      {copy.share}
-                    </a>
+                    {storyFailed ? (
+                      <a href={shareHref} target="_blank" rel="noopener noreferrer" className={SHARE_CLASS}>
+                        <Share2 size={14} />
+                        {copy.share}
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShareOpen(true)}
+                        disabled={!story}
+                        className={`${SHARE_CLASS} disabled:opacity-60`}
+                        data-share="story"
+                      >
+                        <Share2 size={14} />
+                        {copy.share}
+                      </button>
+                    )}
                   </div>
                   <p className="font-sans text-xs text-clay-400/80 italic text-center mt-8 max-w-xl mx-auto">{copy.disclaimer}</p>
                 </motion.div>
@@ -378,6 +434,24 @@ export default function GeometryTest() {
         </section>
       </main>
       <Footer />
+      {shareOpen && (
+        <ShareStoryModal
+          imageUrl={story?.url ?? null}
+          filename={story?.file.name ?? ''}
+          alt={copy.shareAlt(primary.name)}
+          canShareFile={canShareFile}
+          onNativeShare={nativeShare}
+          onClose={closeShare}
+          labels={{
+            title: copy.shareTitle,
+            share: copy.shareNative,
+            download: copy.shareDownload,
+            hint: copy.shareHint,
+            close: copy.shareClose,
+            generating: copy.shareGenerating,
+          }}
+        />
+      )}
     </>
   );
 }

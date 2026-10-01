@@ -346,6 +346,15 @@ export const COPY: Record<
     ctaButton: string;
     ctaWhatsapp: string;
     ctaNote: string;
+    storyIntro: string;
+    storyDiscover: string;
+    shareTitle: string;
+    shareNative: string;
+    shareDownload: string;
+    shareHint: string;
+    shareClose: string;
+    shareAlt: (name: string) => string;
+    shareGenerating: string;
     retake: string;
     share: string;
     shareText: (name: string, element: string) => string;
@@ -377,6 +386,15 @@ export const COPY: Record<
     ctaButton: 'Agenda tu Activación de Geometría Sagrada',
     ctaWhatsapp: 'Tengo dudas: escríbeme por WhatsApp',
     ctaNote: 'Pago seguro con Stripe. Después del pago, Maca te contactará por WhatsApp o correo para coordinar el día y la hora de tu sesión.',
+    storyIntro: 'Mi sólido platónico es',
+    storyDiscover: 'Descubre el tuyo',
+    shareTitle: 'Tu imagen para historias',
+    shareNative: 'Compartir',
+    shareDownload: 'Descargar imagen',
+    shareHint: 'Descárgala y súbela a tus historias de Instagram. En el celular, también puedes mantener presionada la imagen para guardarla.',
+    shareClose: 'Cerrar',
+    shareAlt: (name) => `Imagen de tu resultado: ${name}`,
+    shareGenerating: 'Creando tu imagen…',
     retake: 'Repetir el test',
     share: 'Compartir mi resultado',
     shareText: (name, element) => `Mi sólido platónico es el ${name} (${element}). Descubre el tuyo:`,
@@ -408,6 +426,15 @@ export const COPY: Record<
     ctaButton: 'Book your Sacred Geometry Activation',
     ctaWhatsapp: 'I have questions: message me on WhatsApp',
     ctaNote: 'Secure payment with Stripe. After payment, Maca will contact you via WhatsApp or email to coordinate the day and time of your session.',
+    storyIntro: 'My Platonic Solid is',
+    storyDiscover: 'Discover yours',
+    shareTitle: 'Your story image',
+    shareNative: 'Share',
+    shareDownload: 'Download image',
+    shareHint: 'Download it and upload it to your Instagram story. On your phone, you can also press and hold the image to save it.',
+    shareClose: 'Close',
+    shareAlt: (name) => `Image of your result: ${name}`,
+    shareGenerating: 'Creating your image…',
     retake: 'Retake the test',
     share: 'Share my result',
     shareText: (name, element) => `My Platonic Solid is the ${name} (${element}). Discover yours:`,
