@@ -23,7 +23,7 @@ const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'sacred-geometry':  { 'Online': 'https://buy.stripe.com/14A5kweR5e2G7SK2Zz7AI0j' },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
   'tarot-reading':    { 'Online': 'https://buy.stripe.com/bJe3co8sH7Ei2yq0Rr7AI0l' },
-  'bioconstellation': { 'Online': 'https://buy.stripe.com/9B600cfV91fU4GygQp7AI0d' },
+  'bioconstellation': { 'Online': 'https://buy.stripe.com/5kQcMY10f9Mq4GyfMl7AI0m' },
 };
 
 // Available time slots — Mon/Wed/Fri mornings + Sat all day
