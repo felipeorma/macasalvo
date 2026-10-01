@@ -19,7 +19,7 @@ const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'access-bars':     { 'In-Person': 'https://buy.stripe.com/fZu9AMfV9e2Gb4W8jT7AI0g' },
   'sound-bath':      { 'Online': 'https://buy.stripe.com/bJe14g5gv8Ima0ScA97AI0h' },
   'karnak-personal': { 'Online': 'https://buy.stripe.com/28E6oA24je2Gc902Zz7AI0i' },
-  'space-clearing':  { 'Online': 'https://buy.stripe.com/28EbIU8sH8Imdd4gQp7AI0a' },
+  'space-clearing':  { 'Online': 'https://buy.stripe.com/bJe8wIeR55wab4W1Vv7AI0k' },
   'sacred-geometry':  { 'Online': 'https://buy.stripe.com/14A5kweR5e2G7SK2Zz7AI0j' },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
   'tarot-reading':    { 'Online': 'https://buy.stripe.com/8x2bIUfV9e2Gb4WfMl7AI0c' },
