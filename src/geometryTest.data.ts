@@ -357,6 +357,8 @@ export const COPY: Record<
     shareGenerating: string;
     retake: string;
     share: string;
+    shareSub: string;
+    shareSubFallback: string;
     shareText: (name: string, element: string) => string;
     disclaimer: string;
   }
@@ -396,7 +398,9 @@ export const COPY: Record<
     shareAlt: (name) => `Imagen de tu resultado: ${name}`,
     shareGenerating: 'Creando tu imagen…',
     retake: 'Repetir el test',
-    share: 'Compartir mi resultado',
+    share: 'Comparte tu resultado',
+    shareSub: 'Crea una imagen para tus historias de Instagram',
+    shareSubFallback: 'Envía tu resultado por WhatsApp',
     shareText: (name, element) => `Mi sólido platónico es el ${name} (${element}). Descubre el tuyo:`,
     disclaimer:
       'Este test es una herramienta de autoconocimiento e inspiración. No es un diagnóstico y no reemplaza la atención médica ni psicológica.',
@@ -436,7 +440,9 @@ export const COPY: Record<
     shareAlt: (name) => `Image of your result: ${name}`,
     shareGenerating: 'Creating your image…',
     retake: 'Retake the test',
-    share: 'Share my result',
+    share: 'Share your result',
+    shareSub: 'Create an image for your Instagram stories',
+    shareSubFallback: 'Send your result via WhatsApp',
     shareText: (name, element) => `My Platonic Solid is the ${name} (${element}). Discover yours:`,
     disclaimer:
       'This test is a tool for self-knowledge and inspiration. It is not a diagnosis and does not replace medical or psychological care.',

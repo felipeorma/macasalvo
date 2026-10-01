@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, RotateCcw, Share2, MessageCircle, Clock, ListChecks, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, RotateCcw, Share2, MessageCircle, Clock, ListChecks, Sparkles, Instagram } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PlatonicSolid from '../components/PlatonicSolid';
@@ -16,8 +16,8 @@ type Stage = 'intro' | 'quiz' | 'result';
 
 const TOTAL = QUESTIONS.length;
 const CHIP_ICONS = [ListChecks, Clock, Sparkles];
-const SHARE_CLASS =
-  'inline-flex items-center gap-2 text-xs tracking-widest uppercase font-sans font-semibold text-clay-500 hover:text-terracotta-300 transition-colors';
+const SHARE_CARD =
+  'group w-full max-w-md flex items-center gap-4 text-left p-3 pr-4 rounded-2xl border border-terracotta-200 bg-gradient-to-r from-terracotta-100 via-sand-100 to-rose-100 shadow-md shadow-terracotta-100/70 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-md';
 
 export default function GeometryTest() {
   const { lang } = useLang();
@@ -325,6 +325,50 @@ export default function GeometryTest() {
                       </span>
                     </h2>
                     <p className="font-sans text-[11px] tracking-[0.25em] uppercase text-clay-400 mt-3">{primary.essence}</p>
+
+                    <div className="mt-8 flex justify-center">
+                      {storyFailed ? (
+                        <a href={shareHref} target="_blank" rel="noopener noreferrer" className={SHARE_CARD}>
+                          <span className="flex-shrink-0 w-[54px] h-24 rounded-xl bg-sage-100 border border-white/80 flex items-center justify-center">
+                            <MessageCircle size={22} className="text-sage-600" />
+                          </span>
+                          <span className="flex-1 min-w-0">
+                            <span className="block font-serif text-xl md:text-2xl text-clay-500 leading-tight">{copy.share}</span>
+                            <span className="mt-1 block font-sans text-xs text-clay-400">{copy.shareSubFallback}</span>
+                          </span>
+                          <span className="flex-shrink-0 w-11 h-11 rounded-full bg-terracotta-300 text-cream flex items-center justify-center group-hover:bg-terracotta-400 transition-colors">
+                            <Share2 size={18} />
+                          </span>
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setShareOpen(true)}
+                          disabled={!story}
+                          aria-busy={!story}
+                          className={SHARE_CARD}
+                          data-share="story"
+                        >
+                          <span className="relative flex-shrink-0 w-[54px] h-24 rounded-xl overflow-hidden border border-white/80 shadow-sm bg-sand-200">
+                            {story ? (
+                              <img src={story.url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="absolute inset-0 animate-pulse bg-sand-300/60" />
+                            )}
+                          </span>
+                          <span className="flex-1 min-w-0">
+                            <span className="block font-serif text-xl md:text-2xl text-clay-500 leading-tight">{copy.share}</span>
+                            <span className="mt-1 flex items-center gap-1.5 font-sans text-xs text-clay-400">
+                              <Instagram size={13} className="text-terracotta-300 flex-shrink-0" />
+                              {copy.shareSub}
+                            </span>
+                          </span>
+                          <span className="flex-shrink-0 w-11 h-11 rounded-full bg-terracotta-300 text-cream flex items-center justify-center group-hover:bg-terracotta-400 transition-colors">
+                            <Share2 size={18} />
+                          </span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="glass-card border border-sand-300 p-7 md:p-9 mt-10">
@@ -408,23 +452,6 @@ export default function GeometryTest() {
                       <RotateCcw size={14} />
                       {copy.retake}
                     </button>
-                    {storyFailed ? (
-                      <a href={shareHref} target="_blank" rel="noopener noreferrer" className={SHARE_CLASS}>
-                        <Share2 size={14} />
-                        {copy.share}
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setShareOpen(true)}
-                        disabled={!story}
-                        className={`${SHARE_CLASS} disabled:opacity-60`}
-                        data-share="story"
-                      >
-                        <Share2 size={14} />
-                        {copy.share}
-                      </button>
-                    )}
                   </div>
                   <p className="font-sans text-xs text-clay-400/80 italic text-center mt-8 max-w-xl mx-auto">{copy.disclaimer}</p>
                 </motion.div>
