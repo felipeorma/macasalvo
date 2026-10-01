@@ -22,7 +22,7 @@ const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'space-clearing':  { 'Online': 'https://buy.stripe.com/bJe8wIeR55wab4W1Vv7AI0k' },
   'sacred-geometry':  { 'Online': 'https://buy.stripe.com/14A5kweR5e2G7SK2Zz7AI0j' },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
-  'tarot-reading':    { 'Online': 'https://buy.stripe.com/8x2bIUfV9e2Gb4WfMl7AI0c' },
+  'tarot-reading':    { 'Online': 'https://buy.stripe.com/bJe3co8sH7Ei2yq0Rr7AI0l' },
   'bioconstellation': { 'Online': 'https://buy.stripe.com/9B600cfV91fU4GygQp7AI0d' },
 };
 
