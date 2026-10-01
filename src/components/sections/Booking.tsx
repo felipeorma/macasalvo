@@ -6,10 +6,9 @@ import { useLang } from '../../context/LanguageContext';
 // `async: true` = servicio a distancia SIN cita en vivo (no se agenda fecha/hora).
 const services: { id: string; name: string; modality: string; duration: string; async?: boolean }[] = [
   { id: 'access-bars',      name: 'Access Bars',                              modality: 'In-Person', duration: '90 min' },
-  { id: 'sound-bath',       name: 'Sound Bath',                               modality: 'Hybrid',    duration: '60 min' },
+  { id: 'sound-bath',       name: 'Sound Bath',                               modality: 'Online',    duration: '60 min' },
   { id: 'karnak-personal',  name: 'Personal Energy Harmonization (Karnak)',   modality: 'Online',    duration: '60 min', async: true },
   { id: 'space-clearing',   name: 'Space Energy Clearing',                    modality: 'Online',    duration: '', async: true },
-  { id: 'womens-circle',    name: "Women's Circle",                           modality: 'Hybrid',    duration: '120 min' },
   { id: 'sacred-geometry',  name: 'Sacred Geometry Harmonization',            modality: 'Online',    duration: '75 min' },
   { id: 'sound-bath-group', name: 'Group Sound Bath Online',                  modality: 'Online',    duration: '60 min' },
   { id: 'tarot-reading',    name: 'Tarot Reading — 5 Questions',              modality: 'Online',    duration: 'WhatsApp', async: true },
@@ -18,10 +17,9 @@ const services: { id: string; name: string; modality: string; duration: string; 
 
 const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'access-bars':     { 'In-Person': 'https://buy.stripe.com/aFa3cocIXbUy4Gy57H7AI09' },
-  'sound-bath':      { 'In-Person': 'https://buy.stripe.com/eVq14gbETgaO2yq43D7AI03', 'Online': 'https://buy.stripe.com/5kQ9AMdN1e2G4Gy0Rr7AI04' },
+  'sound-bath':      { 'Online': 'https://buy.stripe.com/5kQ9AMdN1e2G4Gy0Rr7AI04' },
   'karnak-personal': { 'Online': 'https://buy.stripe.com/bJebIU4cr4s6b4W7fP7AI0b' },
   'space-clearing':  { 'Online': 'https://buy.stripe.com/28EbIU8sH8Imdd4gQp7AI0a' },
-  'womens-circle':   { 'In-Person': 'https://buy.stripe.com/5kQ00c6kz8Im6OG0Rr7AI07', 'Online': 'https://buy.stripe.com/5kQ00c6kz8Im6OG0Rr7AI07' },
   'sacred-geometry':  { 'Online': 'https://buy.stripe.com/cNi6oAeR53o21um9nX7AI01' },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
   'tarot-reading':    { 'Online': 'https://buy.stripe.com/8x2bIUfV9e2Gb4WfMl7AI0c' },

@@ -35,7 +35,6 @@ export const SERVICES: { es: string; en: string }[] = [
   { es: 'Baño de Sonido', en: 'Sound Bath' },
   { es: 'Armonización Energética Personal con Péndulo Karnak', en: 'Personal Energy Harmonization with Karnak Pendulum' },
   { es: 'Limpieza Energética de Ambientes', en: 'Space Energy Clearing' },
-  { es: 'Círculo de Mujeres', en: "Women's Circle" },
   { es: 'Armonización con Geometría Sagrada', en: 'Sacred Geometry Harmonization' },
   { es: 'Baño de Sonido Grupal Online', en: 'Online Group Sound Bath' },
   { es: 'Lectura de Tarot Remota — 5 Preguntas', en: 'Remote Tarot Reading — 5 Questions' },

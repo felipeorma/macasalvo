@@ -3,15 +3,15 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Sparkles, CheckCircle } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
 
-type Service = 'access-bars' | 'sound-bath' | 'karnak-personal' | 'space-clearing' | 'womens-circle' | 'sacred-geometry';
+type Service = 'access-bars' | 'sound-bath' | 'karnak-personal' | 'space-clearing' | 'sacred-geometry';
 
 // Q1: concern → which therapies address it (weight 2)
 const concernScores: Record<string, Partial<Record<Service, number>>> = {
   anxiety:      { 'access-bars': 3, 'sound-bath': 1 },
   depression:   { 'sacred-geometry': 2, 'access-bars': 2, 'sound-bath': 1 },
-  relationships:{ 'womens-circle': 3, 'access-bars': 1 },
-  transitions:  { 'womens-circle': 2, 'sacred-geometry': 2, 'access-bars': 1 },
-  grief:        { 'sound-bath': 3, 'womens-circle': 2 },
+  relationships:{ 'access-bars': 1 },
+  transitions:  { 'sacred-geometry': 2, 'access-bars': 1 },
+  grief:        { 'sound-bath': 3 },
   stress:       { 'access-bars': 2, 'sound-bath': 2 },
   selfesteem:   { 'sacred-geometry': 3, 'access-bars': 1 },
   trauma:       { 'access-bars': 3, 'sound-bath': 1 },
@@ -22,7 +22,7 @@ const concernScores: Record<string, Partial<Record<Service, number>>> = {
 // Q2: how they experience it in their body (weight 1 — tiebreaker)
 const bodyScores: Record<string, Partial<Record<Service, number>>> = {
   physical:  { 'access-bars': 2, 'sound-bath': 1 },
-  emotional: { 'sound-bath': 2, 'womens-circle': 1 },
+  emotional: { 'sound-bath': 2 },
   mental:    { 'access-bars': 2, 'sacred-geometry': 1 },
   energetic: { 'karnak-personal': 2, 'sacred-geometry': 1 },
 };
@@ -31,7 +31,6 @@ const bodyScores: Record<string, Partial<Record<Service, number>>> = {
 const supportScores: Record<string, Partial<Record<Service, number>>> = {
   hands_on: { 'access-bars': 6 },
   sound:    { 'sound-bath': 6 },
-  group:    { 'womens-circle': 6 },
   space:    { 'space-clearing': 4, 'sacred-geometry': 3 },
 };
 
@@ -40,9 +39,9 @@ const q1Options = [
   'grief', 'stress', 'selfesteem', 'trauma', 'spiritual', 'home',
 ];
 const q2Options = ['physical', 'emotional', 'mental', 'energetic'];
-const q3Options = ['hands_on', 'sound', 'group', 'space'];
+const q3Options = ['hands_on', 'sound', 'space'];
 
-const ALL_SERVICES: Service[] = ['access-bars', 'sound-bath', 'karnak-personal', 'space-clearing', 'womens-circle', 'sacred-geometry'];
+const ALL_SERVICES: Service[] = ['access-bars', 'sound-bath', 'karnak-personal', 'space-clearing', 'sacred-geometry'];
 
 const fadeSlide = {
   initial: { opacity: 0, x: 30 },
@@ -52,7 +51,7 @@ const fadeSlide = {
 
 function computeResult(concerns: string[], body: string, support: string): Service {
   const scores: Record<Service, number> = {
-    'access-bars': 0, 'sound-bath': 0, 'karnak-personal': 0, 'space-clearing': 0, 'womens-circle': 0, 'sacred-geometry': 0,
+    'access-bars': 0, 'sound-bath': 0, 'karnak-personal': 0, 'space-clearing': 0, 'sacred-geometry': 0,
   };
 
   for (const concern of concerns) {
