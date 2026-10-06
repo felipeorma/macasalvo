@@ -1,5 +1,5 @@
 import { motion, AnimatePresence, useReducedMotion, useMotionValue, useTransform, useSpring, useScroll } from 'framer-motion';
-import { ArrowDown, ChevronDown, Sparkles, Video, Wind } from 'lucide-react';
+import { ArrowDown, ArrowRight, ChevronDown, Sparkles, Video, Wind } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
 import { KARNAK_PERSONAL_PAY_URL, THERAPEUTIC_DIAGNOSIS_PAY_URL } from '../../payments';
 import { BUSINESS } from '../../seo.config';
@@ -100,26 +100,26 @@ type OfferTheme = {
   gradient: string;
   glow: string;
   glowSoft: string;
-  btnText: string;
-  payBtn: string;
+  payBg: string;
+  payPulse: string;
   accent: string;
 };
 
 const THEMES: Record<'terra' | 'sage', OfferTheme> = {
   terra: {
     gradient: 'linear-gradient(135deg, #D4825A 0%, #B05A36 55%, #8C4428 100%)',
-    glow: '0 18px 50px rgba(196,113,74,0.55)',
+    glow: '0 20px 56px rgba(196,113,74,0.65)',
     glowSoft: '0 12px 30px rgba(196,113,74,0.3)',
-    btnText: 'text-terracotta-400',
-    payBtn: 'bg-terracotta-300 hover:bg-terracotta-400 hover:shadow-terracotta-200',
+    payBg: 'linear-gradient(135deg, #D4825A 0%, #B05A36 100%)',
+    payPulse: 'rgba(196,113,74,',
     accent: 'text-terracotta-300',
   },
   sage: {
     gradient: 'linear-gradient(135deg, #9CB88A 0%, #6E8460 55%, #506048 100%)',
-    glow: '0 18px 50px rgba(110,132,96,0.55)',
+    glow: '0 20px 56px rgba(110,132,96,0.65)',
     glowSoft: '0 12px 30px rgba(110,132,96,0.3)',
-    btnText: 'text-sage-600',
-    payBtn: 'bg-sage-500 hover:bg-sage-600 hover:shadow-sage-200',
+    payBg: 'linear-gradient(135deg, #8A9E7A 0%, #506048 100%)',
+    payPulse: 'rgba(110,132,96,',
     accent: 'text-sage-500',
   },
 };
@@ -137,6 +137,7 @@ type OfferProps = {
   less: string;
   cta: string;
   href: string;
+  secure?: string;
   open: boolean;
   onToggle: () => void;
   delay: number;
@@ -148,9 +149,23 @@ const reveal = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-// Tarjeta del inicio: al principio solo muestra el título y un botón; al tocarlo se despliega
+// Brillo que cruza un botón de punta a punta.
+function Shine({ delay, calm }: { delay: number; calm: boolean | null }) {
+  if (calm) return null;
+  return (
+    <motion.span
+      aria-hidden
+      className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12"
+      style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent)' }}
+      animate={{ x: ['0%', '560%'] }}
+      transition={{ duration: 1.3, repeat: Infinity, repeatDelay: 2.2, ease: 'easeInOut', delay }}
+    />
+  );
+}
+
+// Tarjeta del inicio: al principio solo muestra el título y un botón llamativo; al tocarlo se despliega
 // con la descripción, el precio y el botón de pago.
-function Offer({ id, icon: Icon, theme, tag, title, desc, note, price, more, less, cta, href, open, onToggle, delay, floatDuration }: OfferProps) {
+function Offer({ id, icon: Icon, theme, tag, title, desc, note, price, more, less, cta, href, secure, open, onToggle, delay, floatDuration }: OfferProps) {
   const th = THEMES[theme];
   const calm = useReducedMotion();
   return (
@@ -168,7 +183,7 @@ function Offer({ id, icon: Icon, theme, tag, title, desc, note, price, more, les
         y: open || calm ? { duration: 0.4 } : { duration: floatDuration, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.9 },
         boxShadow: open || calm ? { duration: 0.4 } : { duration: floatDuration, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.9 },
       }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.025 }}
       className="relative overflow-hidden rounded-3xl text-center text-cream"
       style={{ background: th.gradient }}
     >
@@ -188,35 +203,47 @@ function Offer({ id, icon: Icon, theme, tag, title, desc, note, price, more, les
         <circle cx="32.7" cy="40" r="20" /><circle cx="67.3" cy="40" r="20" /><circle cx="32.7" cy="60" r="20" /><circle cx="67.3" cy="60" r="20" />
       </svg>
 
-      <div className="relative px-6 pt-7 pb-6 md:px-7">
-        <div className="relative mx-auto mb-4 w-14 h-14 flex items-center justify-center">
-          {!calm && (
-            <motion.span
-              aria-hidden
-              className="absolute inset-0 rounded-full border border-white/70"
-              animate={{ scale: [1, 1.6], opacity: [0.7, 0] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: delay + 0.5 }}
-            />
-          )}
-          <span className="relative flex items-center justify-center w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/40">
-            <Icon size={24} />
-          </span>
+      <div className="relative px-5 pt-8 pb-7 md:px-7">
+        {/* toda esta zona abre/cierra la tarjeta */}
+        <div onClick={onToggle} className="cursor-pointer">
+          <div className="relative mx-auto mb-4 w-14 h-14 flex items-center justify-center">
+            {!calm && (
+              <motion.span
+                aria-hidden
+                className="absolute inset-0 rounded-full border border-white/70"
+                animate={{ scale: [1, 1.6], opacity: [0.7, 0] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: delay + 0.5 }}
+              />
+            )}
+            <span className="relative flex items-center justify-center w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/40">
+              <Icon size={24} />
+            </span>
+          </div>
+
+          <h2 className="font-serif text-4xl md:text-[40px] font-medium leading-[1.05] mb-6 drop-shadow-sm">{title}</h2>
+
+          <motion.button
+            type="button"
+            aria-expanded={open}
+            aria-controls={`offer-${id}`}
+            whileHover={{ scale: 1.07 }}
+            whileTap={{ scale: 0.94 }}
+            animate={open || calm ? { boxShadow: '0 10px 24px rgba(0,0,0,0.22)' } : { boxShadow: ['0 10px 24px rgba(0,0,0,0.22), 0 0 0 0 rgba(255,236,170,0.8)', '0 10px 24px rgba(0,0,0,0.22), 0 0 0 20px rgba(255,236,170,0)'] }}
+            transition={open || calm ? { duration: 0.3 } : { duration: 1.6, repeat: Infinity, ease: 'easeOut', delay: delay + 1 }}
+            className="relative overflow-hidden inline-flex max-w-full items-center justify-center gap-3 px-7 sm:px-9 py-4 rounded-full font-sans text-[13px] sm:text-sm tracking-[0.14em] sm:tracking-[0.16em] uppercase font-semibold text-clay-500"
+            style={{ background: 'linear-gradient(135deg, #FFF3C9 0%, #F2CF68 55%, #E2AE3C 100%)' }}
+          >
+            <Shine delay={delay + 1.2} calm={calm} />
+            <span className="relative">{open ? less : more}</span>
+            {open ? (
+              <ChevronDown size={18} className="relative rotate-180" />
+            ) : (
+              <motion.span className="relative flex" animate={calm ? undefined : { x: [0, 6, 0] }} transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}>
+                <ArrowRight size={18} strokeWidth={2.5} />
+              </motion.span>
+            )}
+          </motion.button>
         </div>
-
-        <h2 className="font-serif text-3xl md:text-[34px] leading-tight mb-5">{title}</h2>
-
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={open}
-          aria-controls={`offer-${id}`}
-          className={`inline-flex items-center gap-2 px-7 py-3 rounded-full bg-cream ${th.btnText} font-sans text-xs tracking-[0.2em] uppercase font-medium shadow-lg shadow-black/10 transition-transform duration-300 hover:-translate-y-0.5 active:scale-95`}
-        >
-          {open ? less : more}
-          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.35 }} className="flex">
-            <ChevronDown size={16} />
-          </motion.span>
-        </button>
 
         <AnimatePresence initial={false}>
           {open && (
@@ -233,28 +260,40 @@ function Offer({ id, icon: Icon, theme, tag, title, desc, note, price, more, les
                 variants={{ show: { transition: { staggerChildren: 0.09, delayChildren: 0.12 } } }}
                 initial="hidden"
                 animate="show"
-                className="mt-5 rounded-2xl bg-white/95 text-left p-5 shadow-inner"
+                className="mt-6 rounded-2xl bg-white/95 text-left p-5 shadow-inner"
               >
                 <motion.span variants={reveal} className={`block section-label mb-2 ${th.accent}`}>{tag}</motion.span>
                 <motion.p variants={reveal} className="font-sans text-sm md:text-[15px] text-clay-400 leading-relaxed mb-2">{desc}</motion.p>
                 <motion.p variants={reveal} className="font-sans text-sm text-clay-500 font-medium leading-relaxed mb-4">{note}</motion.p>
-                <div className="flex items-center justify-between gap-4">
+                <motion.div
+                  variants={{ hidden: { opacity: 0, scale: 0.4, rotate: -8 }, show: { opacity: 1, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 260, damping: 14 } } }}
+                  className="mb-4 flex items-baseline justify-center gap-2"
+                >
+                  <span className="font-serif text-6xl text-clay-500 leading-none">{price}</span>
+                </motion.div>
+                <motion.a
+                  variants={reveal}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="relative overflow-hidden flex items-center justify-center gap-3 w-full px-6 py-5 rounded-full text-white font-sans text-sm sm:text-[15px] tracking-[0.16em] uppercase font-semibold"
+                  style={{ background: th.payBg }}
+                >
                   <motion.span
-                    variants={{ hidden: { opacity: 0, scale: 0.4, rotate: -8 }, show: { opacity: 1, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 260, damping: 14 } } }}
-                    className="font-serif text-4xl text-clay-500 leading-none"
-                  >
-                    {price}
+                    aria-hidden
+                    className="absolute inset-0 rounded-full"
+                    animate={calm ? undefined : { boxShadow: [`0 0 0 0 ${th.payPulse}0.6)`, `0 0 0 16px ${th.payPulse}0)`] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
+                  />
+                  <Shine delay={0.4} calm={calm} />
+                  <span className="relative">{cta}</span>
+                  <motion.span className="relative flex" animate={calm ? undefined : { x: [0, 6, 0] }} transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}>
+                    <ArrowRight size={20} strokeWidth={2.5} />
                   </motion.span>
-                  <motion.a
-                    variants={reveal}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center justify-center flex-1 px-6 py-3.5 rounded-full text-cream font-sans text-xs tracking-widest uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${th.payBtn}`}
-                  >
-                    {cta}
-                  </motion.a>
-                </div>
+                </motion.a>
+                {secure && <motion.p variants={reveal} className="mt-3 text-center font-sans text-xs text-clay-300">{secure}</motion.p>}
               </motion.div>
             </motion.div>
           )}
@@ -468,6 +507,7 @@ export default function Hero() {
             less={t('hero.offer.less')}
             cta={t('hero.offer.energy.cta')}
             href={KARNAK_PERSONAL_PAY_URL}
+            secure={t('booking.stripe.note')}
             open={openOffer === 'energy'}
             onToggle={() => setOpenOffer(openOffer === 'energy' ? null : 'energy')}
             delay={1.1}
@@ -486,6 +526,7 @@ export default function Hero() {
             less={t('hero.offer.less')}
             cta={THERAPEUTIC_DIAGNOSIS_PAY_URL ? t('hero.offer.therapy.cta') : t('hero.offer.therapy.cta.whatsapp')}
             href={THERAPEUTIC_DIAGNOSIS_PAY_URL || `${BUSINESS.whatsapp}?text=${encodeURIComponent(t('hero.offer.therapy.wa'))}`}
+            secure={THERAPEUTIC_DIAGNOSIS_PAY_URL ? t('booking.stripe.note') : undefined}
             open={openOffer === 'therapy'}
             onToggle={() => setOpenOffer(openOffer === 'therapy' ? null : 'therapy')}
             delay={1.3}
