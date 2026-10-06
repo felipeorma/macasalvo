@@ -1,6 +1,8 @@
 import { motion, useMotionValue, useTransform, useSpring, useScroll } from 'framer-motion';
-import { ArrowDown, Sparkles } from 'lucide-react';
+import { ArrowDown, Sparkles, Video, Wind } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
+import { KARNAK_PERSONAL_PAY_URL, THERAPEUTIC_DIAGNOSIS_PAY_URL } from '../../payments';
+import { BUSINESS } from '../../seo.config';
 import { useRef, useEffect } from 'react';
 
 const container = {
@@ -91,6 +93,49 @@ function FloatingOrb({ delay, size, x, y, color }: { delay: number; size: number
       animate={{ y: [0, -30, 0], x: [0, 14, 0], scale: [1, 1.1, 1] }}
       transition={{ duration: 9 + delay, repeat: Infinity, ease: 'easeInOut', delay }}
     />
+  );
+}
+
+type OfferProps = {
+  icon: typeof Wind;
+  tag: string;
+  title: string;
+  desc: string;
+  note: string;
+  price: string;
+  cta: string;
+  href: string;
+  delay: number;
+};
+
+// Tarjeta de oferta del inicio: descripción corta + botón directo al pago.
+function Offer({ icon: Icon, tag, title, desc, note, price, cta, href, delay }: OfferProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 28 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
+      className="flex flex-col text-left rounded-3xl bg-white/70 backdrop-blur-md border border-white/80 shadow-lg shadow-terracotta-200/30 p-5 md:p-6"
+    >
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <span className="inline-flex items-center gap-2 section-label">
+          <Icon size={14} />
+          {tag}
+        </span>
+        <span className="font-serif text-2xl text-clay-500 leading-none">{price}</span>
+      </div>
+      <h2 className="font-serif text-2xl md:text-3xl text-clay-500 leading-tight mb-2">{title}</h2>
+      <p className="font-sans text-sm md:text-[15px] text-clay-400 leading-relaxed mb-2">{desc}</p>
+      <p className="font-sans text-sm text-clay-500 font-medium leading-relaxed mb-4">{note}</p>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-primary mt-auto justify-center w-full text-center"
+      >
+        {cta}
+      </a>
+    </motion.div>
   );
 }
 
@@ -197,15 +242,16 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
+      <div className="relative z-10 w-full pb-32">
       {/* Main content — parallax scroll up + 3D mouse tilt */}
       <motion.div
         style={{ y: heroY, opacity: heroOpacity, rotateX, rotateY, transformPerspective: 1400 }}
-        className="relative z-10 text-center px-6 max-w-5xl mx-auto"
+        className="text-center px-6 max-w-5xl mx-auto"
       >
         <motion.div variants={container} initial="hidden" animate="show">
 
           {/* Badge */}
-          <motion.div variants={item} className="flex items-center justify-center gap-3 mb-8">
+          <motion.div variants={item} className="flex items-center justify-center gap-3 mb-5">
             <motion.div
               className="h-px bg-gradient-to-r from-transparent to-terracotta-300"
               initial={{ width: 0 }}
@@ -236,7 +282,7 @@ export default function Hero() {
           {/* Headline */}
           <motion.h1
             variants={item}
-            className="font-serif text-6xl md:text-7xl lg:text-8xl text-clay-500 leading-[1.05] mb-6"
+            className="font-serif text-6xl md:text-7xl lg:text-8xl [@media(max-height:820px)]:lg:text-7xl text-clay-500 leading-[1.05] mb-4"
           >
             <motion.span
               className="inline-block"
@@ -261,7 +307,7 @@ export default function Hero() {
             </motion.em>
             <br />
             <motion.span
-              className="text-4xl md:text-5xl lg:text-6xl font-light text-clay-400 inline-block"
+              className="text-4xl md:text-5xl lg:text-6xl [@media(max-height:820px)]:lg:text-5xl font-light text-clay-400 inline-block"
               initial={{ opacity: 0, letterSpacing: '0.25em' }}
               animate={{ opacity: 1, letterSpacing: '0.02em' }}
               transition={{ duration: 1.4, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -277,26 +323,50 @@ export default function Hero() {
           >
             {t('hero.description')}
           </motion.p>
-
-          {/* CTA */}
-          <motion.div variants={item} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <motion.button
-              onClick={() => scrollTo('#services')}
-              className="relative overflow-hidden px-10 py-4 rounded-full font-sans text-sm tracking-[0.18em] uppercase font-medium border-2 border-terracotta-300 text-terracotta-400 bg-white/60 backdrop-blur-sm shadow-lg shadow-terracotta-200/40 hover:text-cream transition-colors duration-300"
-              whileHover={{ scale: 1.06, boxShadow: '0 12px 40px rgba(196,113,74,0.35)' }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <motion.span
-                className="absolute inset-0 bg-terracotta-300 rounded-full"
-                initial={{ scale: 0, opacity: 0 }}
-                whileHover={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              />
-              <span className="relative z-10">{t('hero.cta.secondary')}</span>
-            </motion.button>
-          </motion.div>
         </motion.div>
       </motion.div>
+
+      {/* Ofertas principales — fuera del bloque que se desvanece al hacer scroll */}
+      <div className="px-6 max-w-4xl mx-auto mt-6">
+        <div className="grid md:grid-cols-2 gap-5">
+          <Offer
+            icon={Wind}
+            tag={t('hero.offer.energy.tag')}
+            title={t('hero.offer.energy.title')}
+            desc={t('hero.offer.energy.desc')}
+            note={t('hero.offer.energy.note')}
+            price="$85"
+            cta={t('hero.offer.energy.cta')}
+            href={KARNAK_PERSONAL_PAY_URL}
+            delay={1.1}
+          />
+          <Offer
+            icon={Video}
+            tag={t('hero.offer.therapy.tag')}
+            title={t('hero.offer.therapy.title')}
+            desc={t('hero.offer.therapy.desc')}
+            note={t('hero.offer.therapy.note')}
+            price="$25"
+            cta={THERAPEUTIC_DIAGNOSIS_PAY_URL ? t('hero.offer.therapy.cta') : t('hero.offer.therapy.cta.whatsapp')}
+            href={THERAPEUTIC_DIAGNOSIS_PAY_URL || `${BUSINESS.whatsapp}?text=${encodeURIComponent(t('hero.offer.therapy.wa'))}`}
+            delay={1.3}
+          />
+        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.7 }}
+          className="mt-5 text-center"
+        >
+          <button
+            onClick={() => scrollTo('#services')}
+            className="font-sans text-xs tracking-[0.22em] uppercase text-terracotta-400 hover:text-terracotta-300 underline underline-offset-8 decoration-terracotta-200 transition-colors"
+          >
+            {t('hero.cta.secondary')}
+          </button>
+        </motion.div>
+      </div>
+      </div>
 
       {/* Scroll indicator */}
       <motion.button

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { MapPin, Globe, Calendar, CreditCard, Info, ChevronDown, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
-import { SACRED_GEOMETRY_PAY_URL } from '../../payments';
+import { SACRED_GEOMETRY_PAY_URL, KARNAK_PERSONAL_PAY_URL } from '../../payments';
 
 // `async: true` = servicio a distancia SIN cita en vivo (no se agenda fecha/hora).
 const services: { id: string; name: string; modality: string; duration: string; async?: boolean }[] = [
@@ -19,7 +19,7 @@ const services: { id: string; name: string; modality: string; duration: string; 
 const stripeLinks: Record<string, Partial<Record<string, string>>> = {
   'access-bars':     { 'In-Person': 'https://buy.stripe.com/fZu9AMfV9e2Gb4W8jT7AI0g' },
   'sound-bath':      { 'Online': 'https://buy.stripe.com/bJe14g5gv8Ima0ScA97AI0h' },
-  'karnak-personal': { 'Online': 'https://buy.stripe.com/28E6oA24je2Gc902Zz7AI0i' },
+  'karnak-personal': { 'Online': KARNAK_PERSONAL_PAY_URL },
   'space-clearing':  { 'Online': 'https://buy.stripe.com/bJe8wIeR55wab4W1Vv7AI0k' },
   'sacred-geometry':  { 'Online': SACRED_GEOMETRY_PAY_URL },
   'sound-bath-group': { 'Online': 'https://buy.stripe.com/14A9AM6kze2Gc90dEd7AI08' },
