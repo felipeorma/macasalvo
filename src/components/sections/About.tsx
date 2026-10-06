@@ -204,6 +204,21 @@ export default function About() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="group relative overflow-hidden rounded-3xl shadow-xl shadow-terracotta-200/40 border border-white/70 aspect-[4/3] md:col-span-2 lg:col-span-1 lg:row-span-3 lg:aspect-auto lg:min-h-[420px]"
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}foto_filosofia.jpg`}
+                alt={t('about.philosophy.photoAlt')}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover object-[42%_center] transition-transform duration-[1400ms] ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-clay-500/25 via-transparent to-transparent pointer-events-none" />
+            </motion.div>
             {philosophyParagraphs.map((para, i) => {
               const isAccent = i === 0;
               return (
