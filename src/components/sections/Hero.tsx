@@ -1,9 +1,9 @@
-import { motion, useMotionValue, useTransform, useSpring, useScroll } from 'framer-motion';
-import { ArrowDown, Sparkles, Video, Wind } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion, useMotionValue, useTransform, useSpring, useScroll } from 'framer-motion';
+import { ArrowDown, ChevronDown, Sparkles, Video, Wind } from 'lucide-react';
 import { useLang } from '../../context/LanguageContext';
 import { KARNAK_PERSONAL_PAY_URL, THERAPEUTIC_DIAGNOSIS_PAY_URL } from '../../payments';
 import { BUSINESS } from '../../seo.config';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 const container = {
   hidden: {},
@@ -96,45 +96,170 @@ function FloatingOrb({ delay, size, x, y, color }: { delay: number; size: number
   );
 }
 
+type OfferTheme = {
+  gradient: string;
+  glow: string;
+  glowSoft: string;
+  btnText: string;
+  payBtn: string;
+  accent: string;
+};
+
+const THEMES: Record<'terra' | 'sage', OfferTheme> = {
+  terra: {
+    gradient: 'linear-gradient(135deg, #D4825A 0%, #B05A36 55%, #8C4428 100%)',
+    glow: '0 18px 50px rgba(196,113,74,0.55)',
+    glowSoft: '0 12px 30px rgba(196,113,74,0.3)',
+    btnText: 'text-terracotta-400',
+    payBtn: 'bg-terracotta-300 hover:bg-terracotta-400 hover:shadow-terracotta-200',
+    accent: 'text-terracotta-300',
+  },
+  sage: {
+    gradient: 'linear-gradient(135deg, #9CB88A 0%, #6E8460 55%, #506048 100%)',
+    glow: '0 18px 50px rgba(110,132,96,0.55)',
+    glowSoft: '0 12px 30px rgba(110,132,96,0.3)',
+    btnText: 'text-sage-600',
+    payBtn: 'bg-sage-500 hover:bg-sage-600 hover:shadow-sage-200',
+    accent: 'text-sage-500',
+  },
+};
+
 type OfferProps = {
+  id: string;
   icon: typeof Wind;
+  theme: keyof typeof THEMES;
   tag: string;
   title: string;
   desc: string;
   note: string;
   price: string;
+  more: string;
+  less: string;
   cta: string;
   href: string;
+  open: boolean;
+  onToggle: () => void;
   delay: number;
+  floatDuration: number;
 };
 
-// Tarjeta de oferta del inicio: descripción corta + botón directo al pago.
-function Offer({ icon: Icon, tag, title, desc, note, price, cta, href, delay }: OfferProps) {
+const reveal = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
+};
+
+// Tarjeta del inicio: al principio solo muestra el título y un botón; al tocarlo se despliega
+// con la descripción, el precio y el botón de pago.
+function Offer({ id, icon: Icon, theme, tag, title, desc, note, price, more, less, cta, href, open, onToggle, delay, floatDuration }: OfferProps) {
+  const th = THEMES[theme];
+  const calm = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col text-left rounded-3xl bg-white/70 backdrop-blur-md border border-white/80 shadow-lg shadow-terracotta-200/30 p-5 md:p-6"
+      initial={{ opacity: 0, y: 36, scale: 0.96 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        y: open || calm ? 0 : [0, -6, 0],
+        boxShadow: open || calm ? th.glowSoft : [th.glowSoft, th.glow, th.glowSoft],
+      }}
+      transition={{
+        opacity: { duration: 0.9, delay },
+        scale: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
+        y: open || calm ? { duration: 0.4 } : { duration: floatDuration, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.9 },
+        boxShadow: open || calm ? { duration: 0.4 } : { duration: floatDuration, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.9 },
+      }}
+      whileHover={{ scale: 1.02 }}
+      className="relative overflow-hidden rounded-3xl text-center text-cream"
+      style={{ background: th.gradient }}
     >
-      <div className="flex items-center justify-between gap-3 mb-3">
-        <span className="inline-flex items-center gap-2 section-label">
-          <Icon size={14} />
-          {tag}
-        </span>
-        <span className="font-serif text-2xl text-clay-500 leading-none">{price}</span>
+      {/* brillo que cruza la tarjeta */}
+      {!calm && (
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent)' }}
+          animate={{ x: ['0%', '480%'] }}
+          transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 4.5, ease: 'easeInOut', delay: delay + 1.5 }}
+        />
+      )}
+      {/* geometría sutil de fondo */}
+      <svg aria-hidden viewBox="0 0 100 100" className="pointer-events-none absolute -right-8 -top-8 w-40 h-40 text-white opacity-[0.12]" fill="none" stroke="currentColor" strokeWidth="0.8">
+        <circle cx="50" cy="50" r="20" /><circle cx="50" cy="30" r="20" /><circle cx="50" cy="70" r="20" />
+        <circle cx="32.7" cy="40" r="20" /><circle cx="67.3" cy="40" r="20" /><circle cx="32.7" cy="60" r="20" /><circle cx="67.3" cy="60" r="20" />
+      </svg>
+
+      <div className="relative px-6 pt-7 pb-6 md:px-7">
+        <div className="relative mx-auto mb-4 w-14 h-14 flex items-center justify-center">
+          {!calm && (
+            <motion.span
+              aria-hidden
+              className="absolute inset-0 rounded-full border border-white/70"
+              animate={{ scale: [1, 1.6], opacity: [0.7, 0] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: delay + 0.5 }}
+            />
+          )}
+          <span className="relative flex items-center justify-center w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm border border-white/40">
+            <Icon size={24} />
+          </span>
+        </div>
+
+        <h2 className="font-serif text-3xl md:text-[34px] leading-tight mb-5">{title}</h2>
+
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls={`offer-${id}`}
+          className={`inline-flex items-center gap-2 px-7 py-3 rounded-full bg-cream ${th.btnText} font-sans text-xs tracking-[0.2em] uppercase font-medium shadow-lg shadow-black/10 transition-transform duration-300 hover:-translate-y-0.5 active:scale-95`}
+        >
+          {open ? less : more}
+          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.35 }} className="flex">
+            <ChevronDown size={16} />
+          </motion.span>
+        </button>
+
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              id={`offer-${id}`}
+              key="details"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden"
+            >
+              <motion.div
+                variants={{ show: { transition: { staggerChildren: 0.09, delayChildren: 0.12 } } }}
+                initial="hidden"
+                animate="show"
+                className="mt-5 rounded-2xl bg-white/95 text-left p-5 shadow-inner"
+              >
+                <motion.span variants={reveal} className={`block section-label mb-2 ${th.accent}`}>{tag}</motion.span>
+                <motion.p variants={reveal} className="font-sans text-sm md:text-[15px] text-clay-400 leading-relaxed mb-2">{desc}</motion.p>
+                <motion.p variants={reveal} className="font-sans text-sm text-clay-500 font-medium leading-relaxed mb-4">{note}</motion.p>
+                <div className="flex items-center justify-between gap-4">
+                  <motion.span
+                    variants={{ hidden: { opacity: 0, scale: 0.4, rotate: -8 }, show: { opacity: 1, scale: 1, rotate: 0, transition: { type: 'spring', stiffness: 260, damping: 14 } } }}
+                    className="font-serif text-4xl text-clay-500 leading-none"
+                  >
+                    {price}
+                  </motion.span>
+                  <motion.a
+                    variants={reveal}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center justify-center flex-1 px-6 py-3.5 rounded-full text-cream font-sans text-xs tracking-widest uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${th.payBtn}`}
+                  >
+                    {cta}
+                  </motion.a>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      <h2 className="font-serif text-2xl md:text-3xl text-clay-500 leading-tight mb-2">{title}</h2>
-      <p className="font-sans text-sm md:text-[15px] text-clay-400 leading-relaxed mb-2">{desc}</p>
-      <p className="font-sans text-sm text-clay-500 font-medium leading-relaxed mb-4">{note}</p>
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn-primary mt-auto justify-center w-full text-center"
-      >
-        {cta}
-      </a>
     </motion.div>
   );
 }
@@ -142,6 +267,7 @@ function Offer({ icon: Icon, tag, title, desc, note, price, cta, href, delay }: 
 export default function Hero() {
   const { t } = useLang();
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [openOffer, setOpenOffer] = useState<'energy' | 'therapy' | null>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -328,28 +454,42 @@ export default function Hero() {
 
       {/* Ofertas principales — fuera del bloque que se desvanece al hacer scroll */}
       <div className="px-6 max-w-4xl mx-auto mt-6">
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-5 items-start">
           <Offer
+            id="energy"
             icon={Wind}
+            theme="terra"
             tag={t('hero.offer.energy.tag')}
             title={t('hero.offer.energy.title')}
             desc={t('hero.offer.energy.desc')}
             note={t('hero.offer.energy.note')}
             price="$85"
+            more={t('hero.offer.more')}
+            less={t('hero.offer.less')}
             cta={t('hero.offer.energy.cta')}
             href={KARNAK_PERSONAL_PAY_URL}
+            open={openOffer === 'energy'}
+            onToggle={() => setOpenOffer(openOffer === 'energy' ? null : 'energy')}
             delay={1.1}
+            floatDuration={5.5}
           />
           <Offer
+            id="therapy"
             icon={Video}
+            theme="sage"
             tag={t('hero.offer.therapy.tag')}
             title={t('hero.offer.therapy.title')}
             desc={t('hero.offer.therapy.desc')}
             note={t('hero.offer.therapy.note')}
             price="$25"
+            more={t('hero.offer.more')}
+            less={t('hero.offer.less')}
             cta={THERAPEUTIC_DIAGNOSIS_PAY_URL ? t('hero.offer.therapy.cta') : t('hero.offer.therapy.cta.whatsapp')}
             href={THERAPEUTIC_DIAGNOSIS_PAY_URL || `${BUSINESS.whatsapp}?text=${encodeURIComponent(t('hero.offer.therapy.wa'))}`}
+            open={openOffer === 'therapy'}
+            onToggle={() => setOpenOffer(openOffer === 'therapy' ? null : 'therapy')}
             delay={1.3}
+            floatDuration={6.5}
           />
         </div>
         <motion.div
